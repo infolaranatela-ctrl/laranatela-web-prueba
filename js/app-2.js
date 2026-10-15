@@ -297,15 +297,16 @@
 
   // EMPRESAS: soluciones profesionales
   // Para el área de compras: razones concretas, verificables, sin apelar a la lástima
-  function porQueComprar(){
-    var it=[
+  var PORQUE0=[
       ['Un proveedor, no una donación','Facturamos como cualquier proveedor: ofrecemos factura A o C de acuerdo a las modalidades o exigencias del cliente. Pago de contado, por transferencia, Mercado Pago o cheque a 30, 60 o 90 días, a acordar con cada cliente. Lo que cambia es quién lo fabrica: un equipo de más de 100 trabajadores con discapacidad, con empleo formal.'],
       ['Prioridad en compras del Estado','La Ley 22.431 (art. 8 bis) obliga al Estado nacional, sus organismos, empresas estatales y concesionarias de servicios públicos a priorizar, a igual costo, las compras a empresas que contratan personas con discapacidad. Si tu organización está en ese grupo, comprarle a La Rañatela cumple con esa prioridad.'],
       ['Taller protegido con régimen propio','La Rañatela está inscripta en el Régimen Federal de Empleo Protegido (Ley 26.816) como Taller Protegido Especial para el Empleo (TPEE). El régimen establece preferencias para los talleres protegidos en las contrataciones del sector público nacional (Decreto 1771/2015).'],
       ['Plazos reales','Pedidos desde 100 unidades, con entrega en 10 a 15 días hábiles según el volumen, el momento del año y la disponibilidad del taller. Los pedidos grandes de fin de año conviene reservarlos con meses de anticipación.'],
       ['Un dato para tu reporte','Cada pedido sostiene puestos de trabajo formales en Maipú y, si elegís la línea de reciclado, recupera material que iba a descarte. Te damos los datos del pedido (unidades, horas de trabajo, kilos recuperados) para tu reporte de sostenibilidad o de compras inclusivas.']
     ];
-    return '<section class="cont sec-pad porque"><div class="cat-cab rv"><h2 class="h2">Por qué comprarle a La Rañatela</h2><span class="cuenta">Para el área de compras</span></div><div class="g2 porque-g porque-5">'+it.map(function(x,i){return '<article class="rv'+(i?' d'+Math.min(3,i):'')+'"><h3>'+x[0]+'</h3><p>'+x[1]+'</p></article>';}).join('')+'</div><p class="porque-nota rv">Las referencias legales son orientativas: cada organismo aplica su propia reglamentación de compras. Si tu área de compras necesita algo más, <a href="#/contacto?producto='+encodeURIComponent('Todavía no lo tengo definido')+'">escribinos</a>.</p></section>';}
+  function porQueComprar(){
+    var it=PORQUE0.map(function(x,i){var o=(SEC.porque||[])[i]||{};return [o.t||x[0],o.x||x[1]];});
+    return '<section class="cont sec-pad porque"><div class="cat-cab rv"><h2 class="h2">Por qué comprarle a La Rañatela</h2><span class="cuenta">Para el área de compras</span></div><div class="g2 porque-g porque-5">'+it.map(function(x,i){return '<article class="rv'+(i?' d'+Math.min(3,i):'')+'"><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></article>';}).join('')+'</div><p class="porque-nota rv">Las referencias legales son orientativas: cada organismo aplica su propia reglamentación de compras. Si tu área de compras necesita algo más, <a href="#/contacto?producto='+encodeURIComponent('Todavía no lo tengo definido')+'">escribinos</a>.</p></section>';}
 
   // Casos de clientes (texto de Lorena, 15/10/2026). Sin montos: los convenios tienen confidencialidad. Fotos: solo las que ya tenemos; el resto se suma desde el Drive.
   var CASOS=[
@@ -328,20 +329,26 @@
      texto:'Loncheras para Bagó, uno de los laboratorios más importantes del país. El pedido nos llegó a través de una agencia de publicidad y con plazo corto: salió en tiempo récord y con la calidad que esperaban.',
      tecnica:'Serigrafía',repite:false}
   ];
+  var CASOS0=CASOS.slice(), SEC={};
+  function sx(k,def){var x=SEC[k];return (x===undefined||x===null||x===''||(Array.isArray(x)&&!x.length))?def:x;}
+  var SOCIOS_B0=[{t:'No es una donación.',x:'Es una contraprestación productiva, con factura y plazos comprometidos.'},{t:'Impacto medible.',x:'Informes periódicos con horas de trabajo generadas, volumen producido y alcance social, listos para tu reporte.'},{t:'Producción programada.',x:'Los pedidos del año se planifican juntos, y los de fin de año se reservan con tiempo.'}];
+  var SOCIOS0={titulo:'Una parte de lo que ya comprás, hecha acá.',lead:'Un Socio Colaborador es una empresa que firma un convenio de 12 a 24 meses para que una parte de lo que ya compra (ropa de trabajo, merchandising, packaging, regalos) se produzca en La Rañatela. Se acuerdan productos y fechas de antemano, así el taller programa la producción y la empresa se asegura entregas.',cifra:'24',unidad:'meses de convenio',casoTitulo:'EMESA, el primer convenio',casoTexto:'Enero de 2026. Productos y fechas fijados de antemano, primer encargo de 5.110 unidades cumplido en plazo, y nuevos pedidos después: mochilas, kits del Mundial y los regalos de fin de año.'};
   function casosClientes(){
-    return '<section class="cont sec-pad casos" id="casos"><div class="cat-cab rv"><h2 class="h2">Trabajos que ya hicimos</h2><span class="cuenta">Grandes volúmenes, años de trabajo</span></div>'+
-      '<p class="lead rv mt16">Clientes con años de relación y pedidos de miles de unidades. Casi todos siguen comprando.</p><div class="casos-g">'+CASOS.map(function(c,i){
-      return '<article class="caso-c rv'+(i?' d'+Math.min(3,i%4):'')+(c.foto?' con-foto':'')+'">'+(c.foto?'<figure class="caso-foto"><img src="'+c.foto+'" alt="'+esc(c.fotoAlt||'')+'" loading="lazy"></figure>':'')+
-        '<div class="caso-tx"><div class="caso-cab">'+(c.logo?'<img class="caso-logo" src="'+c.logo+'" alt="'+esc(c.cliente)+'" loading="lazy">':'<b class="caso-nombre">'+esc(c.cliente)+'</b>')+'</div>'+
+    var lista=CASOS.filter(function(c){return !c.oculto;});if(!lista.length)return '';
+    return '<section class="cont sec-pad casos" id="casos"><div class="cat-cab rv"><h2 class="h2">'+esc(sx('casosTitulo','Trabajos que ya hicimos'))+'</h2><span class="cuenta">'+esc(sx('casosSub','Grandes volúmenes, años de trabajo'))+'</span></div>'+
+      '<p class="lead rv mt16">'+esc(sx('casosLead','Clientes con años de relación y pedidos de miles de unidades. Casi todos siguen comprando.'))+'</p><div class="casos-g">'+lista.map(function(c,i){
+      return '<article class="caso-c rv'+(i?' d'+Math.min(3,i%4):'')+(c.foto?' con-foto':'')+'">'+(c.foto?'<figure class="caso-foto"><img src="'+esc(c.foto)+'" alt="'+esc(c.fotoAlt||'')+'" loading="lazy"></figure>':'')+
+        '<div class="caso-tx"><div class="caso-cab">'+(c.logo?'<img class="caso-logo" src="'+esc(c.logo)+'" alt="'+esc(c.cliente)+'" loading="lazy">':'<b class="caso-nombre">'+esc(c.cliente)+'</b>')+'</div>'+
         '<p class="caso-cifra"><b>'+esc(c.cifra)+'</b><span>'+esc(c.unidad)+'</span></p><h3>'+esc(c.titulo)+'</h3><p>'+esc(c.texto)+'</p>'+
         '<ul class="caso-meta">'+(c.tecnica?'<li>'+esc(c.tecnica)+'</li>':'')+(c.anio?'<li>'+esc(c.anio)+'</li>':'')+(c.repite?'<li class="rep">Volvieron a comprar</li>':'')+'</ul></div></article>';}).join('')+'</div></section>';
   }
   function sociosColaboradores(){
-    return '<section class="banda socios" id="socios"><div class="cont g2 sec-pad"><div class="pila rv">'+ojal('Programa Socios Colaboradores')+'<h2 class="h2">Una parte de lo que ya comprás, hecha acá.</h2>'+
-      '<p class="lead">Un Socio Colaborador es una empresa que firma un convenio de 12 a 24 meses para que una parte de lo que ya compra (ropa de trabajo, merchandising, packaging, regalos) se produzca en La Rañatela. Se acuerdan productos y fechas de antemano, así el taller programa la producción y la empresa se asegura entregas.</p>'+
-      '<ul class="socios-l"><li><b>No es una donación.</b> Es una contraprestación productiva, con factura y plazos comprometidos.</li><li><b>Impacto medible.</b> Informes periódicos con horas de trabajo generadas, volumen producido y alcance social, listos para tu reporte.</li><li><b>Producción programada.</b> Los pedidos del año se planifican juntos, y los de fin de año se reservan con tiempo.</li></ul>'+
+    var S=SOCIOS0, B=sx('sociosB',SOCIOS_B0);
+    return '<section class="banda socios" id="socios"><div class="cont g2 sec-pad"><div class="pila rv">'+ojal('Programa Socios Colaboradores')+'<h2 class="h2">'+esc(sx('sociosTitulo',S.titulo))+'</h2>'+
+      '<p class="lead">'+esc(sx('sociosLead',S.lead))+'</p>'+
+      '<ul class="socios-l">'+B.filter(function(b){return b&&(b.t||b.x);}).map(function(b){return '<li><b>'+esc(b.t||'')+'</b> '+esc(b.x||'')+'</li>';}).join('')+'</ul>'+
       '<div class="fila-btn"><a class="btn" href="#/contacto?producto='+encodeURIComponent('Programa Socios Colaboradores')+'&cantidad=">Quiero ser Socio Colaborador</a><a class="btn am" href="#/eti">Conocé el ETI</a></div></div>'+
-      '<aside class="socios-caso rv d1"><img src="img/clientes-emesa.png" alt="EMESA" class="caso-logo"><p class="caso-cifra"><b>24</b><span>meses de convenio</span></p><h3>EMESA, el primer convenio</h3><p>Enero de 2026. Productos y fechas fijados de antemano, primer encargo de 5.110 unidades cumplido en plazo, y nuevos pedidos después: mochilas, kits del Mundial y los regalos de fin de año.</p><a href="#/empresas?casos" data-ancla="casos">Ver el caso completo</a></aside></div></section>';
+      '<aside class="socios-caso rv d1"><img src="'+esc(sx('sociosLogo','img/clientes-emesa.png'))+'" alt="" class="caso-logo"><p class="caso-cifra"><b>'+esc(sx('sociosCifra',S.cifra))+'</b><span>'+esc(sx('sociosUnidad',S.unidad))+'</span></p><h3>'+esc(sx('sociosCasoTitulo',S.casoTitulo))+'</h3><p>'+esc(sx('sociosCasoTexto',S.casoTexto))+'</p><a href="#/empresas?casos" data-ancla="casos">Ver el caso completo</a></aside></div></section>';
   }
   R.empresas=function(q){
     var t=sec('servicios','tecnicas'), ta=sec('servicios','taller'), rc=sec('servicios','reciclado'), st=sec('contacto','como-trabajamos');
@@ -1051,7 +1058,7 @@
   };
   // ===================== Contenido editable (panel de administración) =====================
   // Los cambios se guardan en la base de datos del sitio (capacidad db) y las fotos en sus archivos (assets).
-  var CMS={general:{},novedades:{},productos:{},galerias:[],prensa:{}}, CMSDB=null, CMSASSETS=null, CMSUSER=null;
+  var CMS={general:{},novedades:{},productos:{},galerias:[],prensa:{},casos:{},secciones:{}}, CMSDB=null, CMSASSETS=null, CMSUSER=null;
   var NOV0=D.novedades.slice(), PROD0=D.productos.map(function(p){return Object.assign({},p);}), NAV0=NAVIDAD.slice(), PRENSA0=PRENSA.slice(), GALETI0=GAL_ETI.slice(), IMP0=IMPACTO.map(function(x){return x.slice();});
   var REDES0={wa:'5492615341275',instagram:'https://www.instagram.com/laranatelamendoza/',tiktok:'https://www.tiktok.com/@lorenacoria75',linkedin:'https://www.linkedin.com/in/eti-la-ra%C3%B1atela-32b430441/'};
   function g(k,def){var v=CMS.general[k];return (v===undefined||v===null||v==='')?def:v;}
@@ -1071,6 +1078,8 @@
     PRENSA=PRENSA0.map(function(n){var o=CMS.prensa[n.id];return o?Object.assign({},n,o):n;}).concat(Object.keys(CMS.prensa).filter(function(k){return CMS.prensa[k].nueva;}).map(function(k){return Object.assign({id:k},CMS.prensa[k]);})).filter(function(n){return !n.eliminada;});
     NAVIDAD=NAV0.concat(CMS.galerias.filter(function(x){return x.galeria==='navidad';}).map(function(x){return [x.url,x.pie||'Regalo navideño de La Rañatela',x.pie||'Regalo navideño'];}));
     GAL_ETI=GALETI0.concat(CMS.galerias.filter(function(x){return x.galeria==='eti';}).map(function(x){return x.url;}));
+    CASOS=CASOS0.map(function(c){var o=CMS.casos[c.id];return o?Object.assign({},c,o):c;}).concat(Object.keys(CMS.casos).filter(function(k){return CMS.casos[k].nuevo;}).map(function(k){return Object.assign({id:k},CMS.casos[k]);})).filter(function(c){return !c.eliminada;}).sort(function(a,b){return (a.orden||0)-(b.orden||0);});
+    SEC=CMS.secciones||{};
   }
   var cmsT=null;function cmsCambio(){aplicarCMS();clearTimeout(cmsT);cmsT=setTimeout(function(){if(window.__repintar&&!(window.__pag&&window.__pag.r==='admin'))window.__repintar();if(window.__pag&&window.__pag.r==='admin')adminPintar();},120);}
   function cmsIniciar(){
@@ -1080,6 +1089,8 @@
       db.collection('novedades').onSnapshot(function(q){var o={};q.docs.forEach(function(d){o[d.id]=d.data();});CMS.novedades=o;cmsCambio();},function(){});
       db.collection('productos').onSnapshot(function(q){var o={};q.docs.forEach(function(d){o[d.id]=d.data();});CMS.productos=o;cmsCambio();},function(){});
       db.collection('prensa').onSnapshot(function(q){var o={};q.docs.forEach(function(d){o[d.id]=d.data();});CMS.prensa=o;cmsCambio();},function(){});
+      db.collection('casos').onSnapshot(function(q){var o={};q.docs.forEach(function(d){o[d.id]=d.data();});CMS.casos=o;cmsCambio();},function(){});
+      db.doc('config/secciones').onSnapshot(function(s){CMS.secciones=(s.exists&&s.data())||{};cmsCambio();},function(){});
       db.collection('galerias').orderBy('orden').onSnapshot(function(q){CMS.galerias=q.docs.map(function(d){return Object.assign({id:d.id},d.data());});cmsCambio();},function(){});
     });
     window.claude.use('user').then(function(u){CMSUSER=u;if(window.__pag&&window.__pag.r==='admin')adminPintar();});
@@ -1095,11 +1106,11 @@
   function subir(file){if(!CMSASSETS)return Promise.reject({code:'sin_permiso'});return CMSASSETS.upload(file);}
   function campo(id,lab,val,tipo,ayuda){tipo=tipo||'text';var inp=tipo==='area'?'<textarea id="'+id+'" rows="4">'+esc(val||'')+'</textarea>':'<input id="'+id+'" type="'+tipo+'"'+(tipo==='number'?' step="any" min="0" inputmode="decimal"':'')+' value="'+esc(val==null?'':val)+'">';return '<label class="adm-campo"><span>'+lab+'</span>'+inp+(ayuda?'<small>'+ayuda+'</small>':'')+'</label>';}
   function chk(id,lab,on){return '<label class="adm-chk"><input id="'+id+'" type="checkbox"'+(on?' checked':'')+'><span>'+lab+'</span></label>';}
-  function v(id){var e=document.getElementById(id);var x=e?(e.type==='checkbox'?e.checked:e.value.trim()):'';return (typeof x==='string'&&/^(p-img|n-img|z-img|p-glb|z-ur|g-ig|g-tt|g-li)$/.test(id))?urlSegura(x):x;}
+  function v(id){var e=document.getElementById(id);var x=e?(e.type==='checkbox'?e.checked:e.value.trim()):'';return (typeof x==='string'&&/^(p-img|n-img|z-img|c-img|c-logo|s-logo|p-glb|z-ur|g-ig|g-tt|g-li)$/.test(id))?urlSegura(x):x;}
   // Solo se aceptan links http(s), rutas del sitio o archivos subidos: nada de javascript: ni data:.
   function urlSegura(u){if(!u)return '';u=u.trim();if(/^(https?:)?\/\//i.test(u)||/^(img\/|#\/|\/|blob:https?:)/i.test(u))return u;if(/^[a-z][a-z0-9+.-]*:/i.test(u))return '';return u;}
   // Inicio del panel: qué hacer, cómo está el sitio y dónde se ve cada cosa
-  var DONDE={general:'Inicio (cifras y banners), pie de página (WhatsApp y redes), ETI y YOSUMÉ (fecha, precio y puntos de retiro).',novedades:'Novedades, y la destacada también en Inicio.',productos:'Productos (catálogo y fichas), "Lo más pedido" en Inicio y el personalizador 3D.',galerias:'Novedades (regalos navideños) y ETI (galería).',prensa:'Nosotros, en "En los medios".'};
+  var DONDE={empresas:'Página Empresas: "Trabajos que ya hicimos", "Programa Socios Colaboradores" y "Por qué comprarle a La Rañatela".',general:'Inicio (cifras y banners), pie de página (WhatsApp y redes), ETI y YOSUMÉ (fecha, precio y puntos de retiro).',novedades:'Novedades, y la destacada también en Inicio.',productos:'Productos (catálogo y fichas), "Lo más pedido" en Inicio y el personalizador 3D.',galerias:'Novedades (regalos navideños) y ETI (galería).',prensa:'Nosotros, en "En los medios".'};
   function adminTabInicio(){
     var prods=PROD0.map(function(p){return Object.assign({},p,CMS.productos[p.slug]||{});}).concat(Object.keys(CMS.productos).filter(function(k){return CMS.productos[k].nuevo;}).map(function(k){return CMS.productos[k];}));
     var oc=prods.filter(function(p){return p.oculto;}).length, de=prods.filter(function(p){return p.destacado&&!p.oculto;}).length;
@@ -1116,7 +1127,8 @@
       acc('productos','Sumar o editar un producto','Nombre, foto, resumen, colores y si va en "Lo más pedido".')+
       acc('general','Cambiar un dato','WhatsApp, redes, cifras del inicio, fecha del ETI, precio del set.')+
       acc('galerias','Subir fotos','A la galería del ETI o a los regalos navideños.')+
-      acc('prensa','Cargar una nota de prensa','Link a la nota o a un video de YouTube.','nueva-prensa')+'</div>'+
+      acc('prensa','Cargar una nota de prensa','Link a la nota o a un video de YouTube.','nueva-prensa')+
+      acc('empresas','Sumar un caso de cliente','Trabajos hechos, Socios Colaboradores y "Por qué comprarle".','nuevo-caso')+'</div>'+
       '<h3 class="adm-h3">Cómo está el sitio</h3><div class="adm-estado">'+
       '<div><b>'+(prods.length-oc)+'</b><span>productos visibles'+(oc?' · '+oc+' oculto'+(oc>1?'s':''):'')+'</span></div>'+
       '<div><b>'+de+'</b><span>en "Lo más pedido"</span></div>'+
@@ -1216,13 +1228,33 @@
         '<div class="adm-acc"><button class="btn" type="submit">Guardar</button><button class="btn am" type="button" data-a="volver">Volver</button>'+(ADM.edit!=='nueva'?'<button class="adm-borrar" type="button" data-a="borrar-prensa">Quitar</button>':'')+'</div></form>';}
     var l=PRENSA.slice().sort(function(a,b){return String(b.fecha||'0').localeCompare(String(a.fecha||'0'));});
     return '<div class="adm-cab"><h2>Prensa</h2><button class="btn" data-a="nueva-prensa">Nueva nota</button></div><p class="adm-donde"><b>Se ve en:</b> Nosotros, en "En los medios". Ordenadas por fecha, la más nueva primero.</p><ul class="adm-lista">'+l.map(function(n){return '<li>'+(n.imagen||ytId(n.url)?'<img src="'+esc(n.imagen||ytMini(ytId(n.url)))+'" alt="">':'<i></i>')+'<div><b>'+esc(n.titulo)+'</b><small>'+esc(n.medio)+(n.fecha?' · '+esc(fechaPrensa(n.fecha)):'')+'</small></div><button class="btn am" data-a="editar-prensa" data-id="'+esc(n.id)+'">Editar</button></li>';}).join('')+'</ul>';}
+  function adminTabEmpresas(){
+    function foto(id,val,lab){return '<div class="adm-foto">'+(val?'<img src="'+esc(val)+'" alt="">':'<span>'+lab+'</span>')+'<label class="btn am adm-subir">'+(val?'Cambiar':'Subir')+'<input type="file" accept="image/*" data-up="'+id+'"></label><input type="hidden" id="'+id+'" value="'+esc(val||'')+'"></div>';}
+    if(ADM.edit&&ADM.edit!=='secciones'){var c=ADM.edit==='nuevo'?{repite:true}:(CASOS.filter(function(x){return x.id===ADM.edit;})[0]||{});
+      return '<form class="adm-form" data-f="caso"><h2>'+(ADM.edit==='nuevo'?'Nuevo caso de cliente':'Editar caso: '+esc(c.cliente||''))+'</h2>'+
+        campo('c-cl','Cliente',c.cliente,'text','Como lo va a leer una empresa: EMESA, YPF, Arcor.')+'<div class="adm-fila">'+campo('c-ci','Cifra grande',c.cifra,'text','Ej.: 5.110, 7.500, Toda, Récord')+campo('c-un','Qué es la cifra',c.unidad,'text','Ej.: unidades en el primer encargo')+'</div>'+
+        campo('c-ti','Título del caso',c.titulo)+campo('c-tx','Texto',c.texto,'area','Tres o cuatro líneas. Sin montos ni precios.')+
+        '<div class="adm-fila">'+campo('c-te','Técnica',c.tecnica,'text','Ej.: Serigrafía, Varias técnicas')+campo('c-an','Año o período',c.anio,'text','Ej.: 2026, 2023 – 2026')+campo('c-or','Orden',c.orden||'','number','Menor número, más arriba.')+'</div>'+
+        '<div class="adm-fila">'+chk('c-re','Volvieron a comprar',c.repite)+chk('c-oc','Ocultar este caso (no se ve en el sitio)',c.oculto)+'</div>'+
+        '<p class="adm-et">Logo del cliente</p>'+foto('c-logo',c.logo,'Sin logo: se muestra el nombre')+'<p class="adm-et">Foto del trabajo</p>'+foto('c-img',c.foto,'Sin foto (opcional)')+campo('c-alt','Qué se ve en la foto',c.fotoAlt,'text','Para accesibilidad y buscadores.')+
+        '<div class="adm-acc"><button class="btn" type="submit">Guardar</button><button class="btn am" type="button" data-a="volver">Volver</button>'+(ADM.edit!=='nuevo'?'<button class="adm-borrar" type="button" data-a="borrar-caso">Quitar</button>':'')+'</div></form>';}
+    if(ADM.edit==='secciones'){var S=SOCIOS0,B=sx('sociosB',SOCIOS_B0),Q=SEC.porque||[];
+      return '<form class="adm-form" data-f="secciones"><h2>Textos de la página Empresas</h2>'+
+        '<fieldset><legend>Trabajos que ya hicimos</legend>'+campo('s-ct','Título',sx('casosTitulo','Trabajos que ya hicimos'))+campo('s-cs','Subtítulo (arriba a la derecha)',sx('casosSub','Grandes volúmenes, años de trabajo'))+campo('s-cl','Bajada',sx('casosLead','Clientes con años de relación y pedidos de miles de unidades. Casi todos siguen comprando.'),'area')+'</fieldset>'+
+        '<fieldset><legend>Programa Socios Colaboradores</legend>'+campo('s-st','Título',sx('sociosTitulo',S.titulo))+campo('s-sl','Texto',sx('sociosLead',S.lead),'area')+
+        [0,1,2].map(function(i){var b=B[i]||{};return '<div class="adm-fila">'+campo('s-b'+i+'t','Punto '+(i+1)+': en negrita',b.t)+campo('s-b'+i+'x','Punto '+(i+1)+': texto',b.x)+'</div>';}).join('')+
+        '<p class="adm-et">Caso destacado (la tarjeta blanca)</p>'+foto('s-logo',sx('sociosLogo','img/clientes-emesa.png'),'Sin logo')+'<div class="adm-fila">'+campo('s-cc','Cifra',sx('sociosCifra',S.cifra))+campo('s-cu','Qué es la cifra',sx('sociosUnidad',S.unidad))+'</div>'+campo('s-ck','Título',sx('sociosCasoTitulo',S.casoTitulo))+campo('s-cx','Texto',sx('sociosCasoTexto',S.casoTexto),'area')+'</fieldset>'+
+        '<fieldset><legend>Por qué comprarle a La Rañatela</legend><p class="adm-ayuda">Cinco tarjetas. Si dejás una vacía, se usa el texto original.</p>'+PORQUE0.map(function(x,i){var o=Q[i]||{};return campo('q-'+i+'t','Tarjeta '+(i+1)+': título',o.t||x[0])+campo('q-'+i+'x','Tarjeta '+(i+1)+': texto',o.x||x[1],'area');}).join('')+'</fieldset>'+
+        '<div class="adm-acc"><button class="btn" type="submit">Guardar textos</button><button class="btn am" type="button" data-a="volver">Volver</button></div></form>';}
+    return '<div class="adm-cab"><h2>Empresas</h2><div class="adm-acc"><button class="btn am" data-a="editar-secciones">Editar textos de la página</button><button class="btn" data-a="nuevo-caso">Nuevo caso</button></div></div>'+adminDonde('empresas')+
+      '<h3 class="adm-h3">Casos de clientes</h3><ul class="adm-lista">'+CASOS.map(function(c){return '<li'+(c.oculto?' class="adm-oculto"':'')+'>'+(c.foto||c.logo?'<img src="'+esc(c.foto||c.logo)+'" alt="">':'<i></i>')+'<div><b>'+esc(c.cliente)+(c.oculto?' · oculto':'')+'</b><small>'+esc(c.cifra||'')+' '+esc(c.unidad||'')+(c.foto?'':' · sin foto')+'</small></div><button class="btn am" data-a="editar-caso" data-id="'+esc(c.id)+'">Editar</button></li>';}).join('')+'</ul>';}
   function adminPintar(){var raiz=document.getElementById('adm');if(!raiz)return;
     var puede=CMSUSER?CMSUSER.canEdit():null;
     if(!CMSDB){raiz.innerHTML='<div class="adm-vacio"><h2>Conectando…</h2><p>Si no carga, abrí el sitio desde claude.ai con tu cuenta.</p></div>';return;}
     if(puede===false){raiz.innerHTML='<div class="adm-vacio"><h2>Solo para editores</h2><p>Pedile a quien administra el sitio que te dé permiso de edición.</p></div>';return;}
-    var tabs=[['inicio','Inicio'],['general','Datos generales'],['novedades','Novedades'],['productos','Productos'],['galerias','Galerías'],['prensa','Prensa']];
+    var tabs=[['inicio','Inicio'],['general','Datos generales'],['novedades','Novedades'],['productos','Productos'],['galerias','Galerías'],['prensa','Prensa'],['empresas','Empresas']];
     raiz.innerHTML='<nav class="adm-tabs" role="tablist">'+tabs.map(function(t){return '<button role="tab" aria-selected="'+(ADM.tab===t[0])+'" data-tab="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</nav><p class="adm-msg '+(ADM.tipo||'')+'" role="status">'+esc(ADM.msg||'')+'</p><div class="adm-cuerpo">'+
-      (ADM.tab==='inicio'?adminTabInicio():ADM.tab==='general'?adminTabGeneral():ADM.tab==='novedades'?adminTabNovedades():ADM.tab==='productos'?adminTabProductos():ADM.tab==='prensa'?adminTabPrensa():adminTabGalerias())+'</div>'+
+      (ADM.tab==='inicio'?adminTabInicio():ADM.tab==='general'?adminTabGeneral():ADM.tab==='novedades'?adminTabNovedades():ADM.tab==='productos'?adminTabProductos():ADM.tab==='prensa'?adminTabPrensa():ADM.tab==='empresas'?adminTabEmpresas():adminTabGalerias())+'</div>'+
       '<div class="adm-sucio" hidden><span>Tenés cambios sin guardar.</span><button type="button" class="btn" data-a="guardar-form">Guardar</button></div>';
     ADM.sucio=false;
     admPzDibujar();
@@ -1232,7 +1264,7 @@
     ADM.edit=null;ADM.msg='';setTimeout(adminPintar,0);
     return '<div class="adm-top"><div class="adm-top-in"><span class="adm-marca"><img src="img/logo-blanco.png" alt="" width="36" height="36">La Rañatela <b>Admin</b> <span class="beta">Beta</span></span><a class="adm-ver" href="#/">Ver el sitio →</a></div><div class="adm-top-tx"><h1>Panel del sitio</h1><p>Cambiá textos, fotos, novedades y productos. Los cambios se ven en el sitio apenas guardás.</p></div></div><section class="adm-wrap"><div class="adm" id="adm"></div></section>';};
   document.addEventListener('click',function(e){var raiz=document.getElementById('adm');if(!raiz||!raiz.contains(e.target))return;
-    var t=e.target.closest('[data-tab]');if(t){if(ADM.sucio&&!t.dataset.ok){t.dataset.ok='1';var su=raiz.querySelector('.adm-sucio span');if(su)su.textContent='Tenés cambios sin guardar. Tocá de nuevo para salir sin guardar.';setTimeout(function(){delete t.dataset.ok;},3000);return;}ADM.tab=t.dataset.tab;ADM.edit=t.dataset.ir==='nueva-nov'||t.dataset.ir==='nueva-prensa'?'nueva':null;ADM.msg='';adminPintar();window.scrollTo({top:Math.max(0,raiz.getBoundingClientRect().top+scrollY-90),behavior:'smooth'});return;}
+    var t=e.target.closest('[data-tab]');if(t){if(ADM.sucio&&!t.dataset.ok){t.dataset.ok='1';var su=raiz.querySelector('.adm-sucio span');if(su)su.textContent='Tenés cambios sin guardar. Tocá de nuevo para salir sin guardar.';setTimeout(function(){delete t.dataset.ok;},3000);return;}ADM.tab=t.dataset.tab;ADM.edit=t.dataset.ir==='nueva-nov'||t.dataset.ir==='nueva-prensa'?'nueva':t.dataset.ir==='nuevo-caso'?'nuevo':null;ADM.msg='';adminPintar();window.scrollTo({top:Math.max(0,raiz.getBoundingClientRect().top+scrollY-90),behavior:'smooth'});return;}
     if(e.target.closest('[data-a="guardar-form"]')){var fm=raiz.querySelector('.adm-form');if(fm)fm.requestSubmit();return;}
     var b=e.target.closest('[data-a]');if(!b)return;var a=b.dataset.a,id=b.dataset.id;
     if(a==='volver'){ADM.edit=null;adminPintar();}
@@ -1240,6 +1272,10 @@
     if(a==='nuevo-prod'){ADM.edit='nuevo';adminPintar();}
     if(a==='nueva-prensa'){ADM.edit='nueva';adminPintar();}
     if(a==='editar-prensa'){ADM.edit=id;adminPintar();}
+    if(a==='nuevo-caso'){ADM.edit='nuevo';adminPintar();}
+    if(a==='editar-caso'){ADM.edit=id;adminPintar();}
+    if(a==='editar-secciones'){ADM.edit='secciones';adminPintar();}
+    if(a==='borrar-caso'&&confirmar(b)){var cid=ADM.edit,corig=CASOS0.some(function(n){return n.id===cid;});(corig?CMSDB.collection('casos').doc(cid).set({eliminada:true}):CMSDB.collection('casos').doc(cid).delete()).then(function(){ADM.edit=null;aviso('Caso quitado.');adminPintar();},err);}
     if(a==='borrar-prod'&&confirmar(b)){CMSDB.collection('productos').doc(ADM.edit).delete().then(function(){ADM.edit=null;aviso('Producto eliminado.');adminPintar();},err);}
     if(a==='borrar-prensa'&&confirmar(b)){var pid=ADM.edit,orig=PRENSA0.some(function(n){return n.id===pid;});(orig?CMSDB.collection('prensa').doc(pid).set({eliminada:true}):CMSDB.collection('prensa').doc(pid).delete()).then(function(){ADM.edit=null;aviso('Nota quitada.');adminPintar();},err);}
     if(a==='editar-nov'||a==='editar-prod'){ADM.edit=id;adminPintar();}
@@ -1273,6 +1309,12 @@
       if(!dn.imagen){aviso('Subí una foto del producto.','error');fin();return;}
       var pzL=admPzLeer();if(pzL.error){aviso(pzL.error,'error');fin();var fs=document.querySelector('.adm-pz');if(fs)fs.scrollIntoView({block:'center',behavior:'smooth'});return;}dn.pz=pzL.pz;
       CMSDB.collection('productos').doc(slug2).set(dn).then(function(){ADM.edit=null;aviso('Producto guardado. Ya está en el catálogo.');fin();adminPintar();},function(x){err(x);fin();});}
+    if(k==='caso'){var dc={cliente:v('c-cl'),cifra:v('c-ci'),unidad:v('c-un'),titulo:v('c-ti'),texto:v('c-tx'),tecnica:v('c-te'),anio:v('c-an'),orden:v('c-or')?Number(v('c-or')):0,repite:v('c-re'),oculto:v('c-oc'),logo:v('c-logo'),foto:v('c-img'),fotoAlt:v('c-alt')};
+      if(!dc.cliente||!dc.texto){aviso('Faltan el cliente o el texto.','error');fin();return;}
+      var cid2=ADM.edit==='nuevo'?('c'+Date.now().toString(36)):ADM.edit;if(!CASOS0.some(function(n){return n.id===cid2;}))dc.nuevo=true;
+      CMSDB.collection('casos').doc(cid2).set(dc).then(function(){ADM.edit=null;aviso('Caso guardado.');fin();adminPintar();},function(x){err(x);fin();});}
+    if(k==='secciones'){var ds={casosTitulo:v('s-ct'),casosSub:v('s-cs'),casosLead:v('s-cl'),sociosTitulo:v('s-st'),sociosLead:v('s-sl'),sociosB:[0,1,2].map(function(i){return {t:v('s-b'+i+'t'),x:v('s-b'+i+'x')};}),sociosLogo:v('s-logo'),sociosCifra:v('s-cc'),sociosUnidad:v('s-cu'),sociosCasoTitulo:v('s-ck'),sociosCasoTexto:v('s-cx'),porque:PORQUE0.map(function(x,i){return {t:v('q-'+i+'t'),x:v('q-'+i+'x')};})};
+      CMSDB.doc('config/secciones').set(ds).then(function(){ADM.edit=null;aviso('Textos guardados.');fin();adminPintar();},function(x){err(x);fin();});}
     if(k==='prensa'){var dpz={medio:v('z-me'),titulo:v('z-ti'),fecha:v('z-fe'),url:v('z-ur'),imagen:v('z-img')};
       if(!dpz.titulo||!dpz.url){aviso('Faltan el título o el link.','error');fin();return;}
       var nid=ADM.edit==='nueva'?('n'+Date.now().toString(36)):ADM.edit,esOrig=PRENSA0.some(function(n){return n.id===nid;});if(!esOrig)dpz.nueva=true;
