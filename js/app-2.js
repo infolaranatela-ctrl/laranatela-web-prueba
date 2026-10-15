@@ -299,12 +299,50 @@
   // Para el área de compras: razones concretas, verificables, sin apelar a la lástima
   function porQueComprar(){
     var it=[
-      ['Un proveedor, no una donación','Facturamos como cualquier proveedor, con presupuesto previo, orden de compra y plazo de entrega comprometido. Lo que cambia es quién lo fabrica: un equipo de más de 100 trabajadores con discapacidad, con empleo formal.'],
+      ['Un proveedor, no una donación','Facturamos como cualquier proveedor: ofrecemos factura A o C de acuerdo a las modalidades o exigencias del cliente. Pago de contado, por transferencia, Mercado Pago o cheque a 30, 60 o 90 días, a acordar con cada cliente. Lo que cambia es quién lo fabrica: un equipo de más de 100 trabajadores con discapacidad, con empleo formal.'],
       ['Prioridad en compras del Estado','La Ley 22.431 (art. 8 bis) obliga al Estado nacional, sus organismos, empresas estatales y concesionarias de servicios públicos a priorizar, a igual costo, las compras a empresas que contratan personas con discapacidad. Si tu organización está en ese grupo, comprarle a La Rañatela cumple con esa prioridad.'],
-      ['Taller protegido con régimen propio','La Rañatela trabaja bajo el Régimen Federal de Empleo Protegido (Ley 26.816), que establece preferencias para los talleres protegidos de producción en las contrataciones del sector público nacional (Decreto 1771/2015).'],
+      ['Taller protegido con régimen propio','La Rañatela está inscripta en el Régimen Federal de Empleo Protegido (Ley 26.816) como Taller Protegido Especial para el Empleo (TPEE). El régimen establece preferencias para los talleres protegidos en las contrataciones del sector público nacional (Decreto 1771/2015).'],
+      ['Plazos reales','Entregamos desde 5 días hábiles, según el volumen, el momento del año y la disponibilidad del taller. Hay productos que salen en un día; los pedidos grandes de fin de año conviene reservarlos con meses de anticipación.'],
       ['Un dato para tu reporte','Cada pedido sostiene puestos de trabajo formales en Maipú y, si elegís la línea de reciclado, recupera material que iba a descarte. Te damos los datos del pedido (unidades, horas de trabajo, kilos recuperados) para tu reporte de sostenibilidad o de compras inclusivas.']
     ];
-    return '<section class="cont sec-pad porque"><div class="cat-cab rv"><h2 class="h2">Por qué comprarle a La Rañatela</h2><span class="cuenta">Para el área de compras</span></div><div class="g2 porque-g">'+it.map(function(x,i){return '<article class="rv'+(i?' d'+Math.min(3,i):'')+'"><h3>'+x[0]+'</h3><p>'+x[1]+'</p></article>';}).join('')+'</div><p class="porque-nota rv">Las referencias legales son orientativas: cada organismo aplica su propia reglamentación de compras. Si tu área legal necesita la documentación, te la mandamos. <a href="#/contacto?producto='+encodeURIComponent('Todavía no lo tengo definido')+'">Pedila acá</a>.</p></section>';}
+    return '<section class="cont sec-pad porque"><div class="cat-cab rv"><h2 class="h2">Por qué comprarle a La Rañatela</h2><span class="cuenta">Para el área de compras</span></div><div class="g2 porque-g porque-5">'+it.map(function(x,i){return '<article class="rv'+(i?' d'+Math.min(3,i):'')+'"><h3>'+x[0]+'</h3><p>'+x[1]+'</p></article>';}).join('')+'</div><p class="porque-nota rv">Las referencias legales son orientativas: cada organismo aplica su propia reglamentación de compras. Si tu área de compras necesita algo más, <a href="#/contacto?producto='+encodeURIComponent('Todavía no lo tengo definido')+'">escribinos</a>.</p></section>';}
+
+  // Casos de clientes (texto de Lorena, 15/10/2026). Sin montos: los convenios tienen confidencialidad. Fotos: solo las que ya tenemos; el resto se suma desde el Drive.
+  var CASOS=[
+    {id:'emesa',cliente:'EMESA',logo:'img/clientes-emesa.png',cifra:'5.110',unidad:'unidades en el primer encargo',titulo:'Nuestro primer Socio Colaborador',
+     texto:'Empresa Mendocina de Energía fue la primera en sumarse al Programa Socios Colaboradores: un convenio por 24 meses firmado en enero de 2026. El primer encargo fueron 1.000 pilusos, 1.000 gorras serigrafiadas, 450 neceseres bordados, 300 organizadores de neoprene para auto, 150 ecobolsas, 100 bolsas para vino, 60 loncheras térmicas y 50 sets de asador. Después vinieron las mochilas y los kits del Mundial.',
+     foto:'img/productos-gorra-trucker.jpg',fotoAlt:'Gorras trucker azul marino con el logo de EMESA serigrafiado, alineadas en el taller',tecnica:'Serigrafía y bordado',anio:'2026',repite:true},
+    {id:'aesa',cliente:'Astra Evangelista (AESA, grupo YPF)',logo:'img/clientes-aesa.png',cifra:'7.500',unidad:'kits del Mundial',titulo:'Kits del Mundial y 3.500 camisas que no se tiraron',
+     texto:'Para el Mundial 2026 armamos 7.500 kits: bandera argentina, piluso, cuello tipo puff y un banderín de 10 metros. En otro trabajo, 3.500 camisas de jean nuevas que la empresa no podía usar por normas de higiene y seguridad se transformaron en 3.500 delantales de asador, 3.500 mochilas y 7.000 cartucheras.',
+     foto:'img/productos-delantal-jean.jpg',fotoAlt:'Delantal de asador confeccionado a partir de una camisa de jean recuperada',tecnica:'Varias técnicas',anio:'2026',repite:true},
+    {id:'ypf',cliente:'YPF',logo:'img/clientes-ypf.png',cifra:'3.000',unidad:'loncheras por año',titulo:'Cuatro años seguidos',
+     texto:'Para la petrolera más grande de la Argentina hacemos unas 3.000 loncheras térmicas por año: tela tracker con foil interior que conserva el frío y el calor, y el logo en serigrafía. Empezamos en 2023 y 2026 es el cuarto año consecutivo.',
+     tecnica:'Serigrafía',anio:'2023 – 2026',repite:true},
+    {id:'arcor',cliente:'Arcor',logo:'img/clientes-arcor.png',cifra:'10.000',unidad:'delantales para Chocolina',titulo:'Diez mil delantales violetas',
+     texto:'En 2025 confeccionamos 10.000 delantales en tropical mecánico violeta, con impresión en serigrafía, para Chocolina. Antes, en 2022 y 2023, un kit de cocina (delantal de gabardina, agarradera e individual) que llegó de regalo a la gente de Arcor en todo el país.',
+     tecnica:'Serigrafía',anio:'2022 – 2025',repite:true},
+    {id:'superconectados',cliente:'Superconectados',cifra:'Toda',unidad:'la ropa del personal',titulo:'Cambio de marca sin tirar la ropa',
+     texto:'Cuando Supercanal pasó a llamarse Superconectados, le cambiamos el logo a todas las prendas del personal. Es el trabajo que nadie quiere hacer, y evita descartar ropa en buen estado. Si tu marca cambia, la ropa que ya compraste se puede recuperar.',
+     tecnica:'Reconversión de prendas',repite:true},
+    {id:'bago',cliente:'Bagó',cifra:'Récord',unidad:'de tiempo de entrega',titulo:'Loncheras para un laboratorio líder',
+     texto:'Loncheras para Bagó, uno de los laboratorios más importantes del país. El pedido nos llegó a través de una agencia de publicidad y con plazo corto: salió en tiempo récord y con la calidad que esperaban.',
+     tecnica:'Serigrafía',repite:false}
+  ];
+  function casosClientes(){
+    return '<section class="cont sec-pad casos" id="casos"><div class="cat-cab rv"><h2 class="h2">Trabajos que ya hicimos</h2><span class="cuenta">Grandes volúmenes, años de trabajo</span></div>'+
+      '<p class="lead rv mt16">Clientes con años de relación y pedidos de miles de unidades. Casi todos siguen comprando.</p><div class="casos-g">'+CASOS.map(function(c,i){
+      return '<article class="caso-c rv'+(i?' d'+Math.min(3,i%4):'')+(c.foto?' con-foto':'')+'">'+(c.foto?'<figure class="caso-foto"><img src="'+c.foto+'" alt="'+esc(c.fotoAlt||'')+'" loading="lazy"></figure>':'')+
+        '<div class="caso-tx"><div class="caso-cab">'+(c.logo?'<img class="caso-logo" src="'+c.logo+'" alt="'+esc(c.cliente)+'" loading="lazy">':'<b class="caso-nombre">'+esc(c.cliente)+'</b>')+'</div>'+
+        '<p class="caso-cifra"><b>'+esc(c.cifra)+'</b><span>'+esc(c.unidad)+'</span></p><h3>'+esc(c.titulo)+'</h3><p>'+esc(c.texto)+'</p>'+
+        '<ul class="caso-meta">'+(c.tecnica?'<li>'+esc(c.tecnica)+'</li>':'')+(c.anio?'<li>'+esc(c.anio)+'</li>':'')+(c.repite?'<li class="rep">Volvieron a comprar</li>':'')+'</ul></div></article>';}).join('')+'</div></section>';
+  }
+  function sociosColaboradores(){
+    return '<section class="banda socios" id="socios"><div class="cont g2 sec-pad"><div class="pila rv">'+ojal('Programa Socios Colaboradores')+'<h2 class="h2">Una parte de lo que ya comprás, hecha acá.</h2>'+
+      '<p class="lead">Un Socio Colaborador es una empresa que firma un convenio de 12 a 24 meses para que una parte de lo que ya compra (ropa de trabajo, merchandising, packaging, regalos) se produzca en La Rañatela. Se acuerdan productos y fechas de antemano, así el taller programa la producción y la empresa se asegura entregas.</p>'+
+      '<ul class="socios-l"><li><b>No es una donación.</b> Es una contraprestación productiva, con factura y plazos comprometidos.</li><li><b>Impacto medible.</b> Informes periódicos con horas de trabajo generadas, volumen producido y alcance social, listos para tu reporte.</li><li><b>Producción programada.</b> Los pedidos del año se planifican juntos, y los de fin de año se reservan con tiempo.</li></ul>'+
+      '<div class="fila-btn"><a class="btn" href="#/contacto?producto='+encodeURIComponent('Programa Socios Colaboradores')+'&cantidad=">Quiero ser Socio Colaborador</a><a class="btn am" href="#/eti">Conocé el ETI</a></div></div>'+
+      '<aside class="socios-caso rv d1"><img src="img/clientes-emesa.png" alt="EMESA" class="caso-logo"><p class="caso-cifra"><b>24</b><span>meses de convenio</span></p><h3>EMESA, el primer convenio</h3><p>Enero de 2026. Productos y fechas fijados de antemano, primer encargo de 5.110 unidades cumplido en plazo, y nuevos pedidos después: mochilas, kits del Mundial y los regalos de fin de año.</p><a href="#/empresas?casos" data-ancla="casos">Ver el caso completo</a></aside></div></section>';
+  }
   R.empresas=function(q){
     var t=sec('servicios','tecnicas'), ta=sec('servicios','taller'), rc=sec('servicios','reciclado'), st=sec('contacto','como-trabajamos');
     function vid(v,son){v=v||{};return '<div class="video rv d2"><video src="'+img(v.src)+'" poster="'+img(v.poster)+'" muted loop playsinline autoplay preload="none"></video>'+(son?botonSonido():'')+'</div>';}
@@ -312,6 +350,8 @@
       '<ul class="datos-b2b entra e4"><li><b>100</b> unidades de pedido mínimo</li><li><b>10–15</b> días hábiles de producción</li><li><b>100%</b> a medida: material, tamaño y gráfica</li></ul></section>';
     html+='<section class="cont" style="padding-bottom:clamp(56px,7vw,96px)">'+solucionesGrid(true)+'</section>';
     html+='<section aria-label="Confiaron en nosotros" style="padding-bottom:clamp(56px,7vw,96px);position:relative;z-index:1"><div class="cont rv">'+ojal('Confiaron en nosotros')+'</div>'+logosConfianza()+'</section>';
+    html+=casosClientes();
+    html+=sociosColaboradores();
     html+=porQueComprar();
     html+='<section class="banda"><div class="cont sec-pad"><h2 class="h2 rv">'+esc(st.heading)+'</h2><ol class="linea pasos rv">'+(st.items||[]).map(function(it,i){return '<li class="rv'+(i?' d'+Math.min(3,i):'')+'"><span class="an">0'+it.number+'</span><h3>'+esc(it.title)+'</h3><p>'+esc(it.text)+'</p></li>';}).join('')+'</ol></div></section>';
     html+='<section class="cont sec-pad"><h2 class="h2 rv">'+esc(t.heading)+'</h2>'+ps(t.paragraphs,'lead rv mt16')+'<div class="g3 tarjetas">'+(t.items||[]).map(function(it,i){return '<article class="tarj rv'+(i?' d'+i:'')+'">'+ico(it.title)+'<h3>'+esc(it.title)+'</h3><p>'+esc(it.text)+'</p><ul>'+(it.bullets||[]).map(function(b){return '<li>'+esc(b)+'</li>';}).join('')+'</ul></article>';}).join('')+'</div></section>';
@@ -1301,6 +1341,7 @@
     if(window.__activar)window.__activar(app);
     if(window.__medir)window.__medir();
     if(rt.r==='eti'&&rt.q==='sumate'){var su=document.getElementById('sumate'); if(su)setTimeout(function(){su.scrollIntoView({behavior:'smooth',block:'center'});},primero?0:450);}
+    if(rt.r==='empresas'&&rt.q&&/^[a-z-]+$/.test(rt.q)){var eq=document.getElementById(rt.q);if(eq)setTimeout(function(){eq.scrollIntoView({behavior:'smooth',block:'start'});},primero?0:450);}
     if(rt.r==='tejiendo'&&rt.q){var tq=document.getElementById(rt.q);if(tq)setTimeout(function(){tq.scrollIntoView({behavior:'smooth',block:'start'});},primero?0:450);}
     if(rt.r==='productos'&&rt.q){var el=document.getElementById('cat-'+rt.q); if(el)setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},primero?0:450);}
   }
@@ -1321,6 +1362,7 @@
   window.addEventListener('hashchange',ir);
   // interacciones de las páginas
   document.addEventListener('click',function(e){
+    var ba=e.target.closest('[data-ancla]'); if(ba){var ea=document.getElementById(ba.getAttribute('data-ancla')); if(ea){e.preventDefault();ea.scrollIntoView({behavior:'smooth',block:'start'});} return;}
     var b=e.target.closest('[data-ir]'); if(b){var el=document.getElementById('cat-'+b.getAttribute('data-ir')); if(el)el.scrollIntoView({behavior:'smooth',block:'start'}); return;}
     var tf=e.target.closest('[data-tec-f]'); if(tf){var tec=tf.getAttribute('data-tec-f'),tot=0;document.querySelectorAll('[data-tec-f]').forEach(function(x){x.setAttribute('aria-pressed',String(x===tf));});
       document.querySelectorAll('.cat').forEach(function(cat){var vis=0;cat.querySelectorAll('.prod').forEach(function(c){var ok=tec==='todas'||(c.getAttribute('data-tec')||'').split(' ').indexOf(tec)>=0;c.hidden=!ok;if(ok)vis++;});cat.hidden=!vis;tot+=vis;var cu=cat.querySelector('.cuenta');if(cu)cu.innerHTML='<b>'+String(vis).padStart(2,'0')+'</b> '+(vis===1?'producto':'productos');});
