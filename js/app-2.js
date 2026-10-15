@@ -36,9 +36,10 @@
   var CATLAB=Object.assign({navidad:'Línea navideña'},CAT.productPageCategoryLabels);
   var WA_GEN=(D.footer.contact||{}).whatsappHref||(WA);
 
+  function tecsDe(p){return (p.impresion||[]).map(function(t){return t.toLowerCase().replace(/ó/g,'o').replace(/í/g,'i');});}
   function tarjetaProd(p,i){
-    return '<a href="#/productos/'+esc(p.slug)+'" class="prod rv'+(i%3?' d'+(i%3):'')+'"><span class="im"><img src="'+img(p.imagen)+'" alt="'+esc(p.imagenAlt)+'" loading="lazy"></span><span class="tx">'+
-      (p.reciclado?'<span class="sello-rec">Material recuperado</span>':'')+'<h3>'+esc(p.nombre)+'</h3><p>'+esc(p.resumen)+'</p><span class="ficha"><span><i class="sw sw-'+esc(p.material)+'" aria-hidden="true"></i>'+esc(MAT[p.material]||(p.material==='carton'?'Cartón':''))+'</span>'+
+    return '<a href="#/productos/'+esc(p.slug)+'" class="prod rv'+(i%3?' d'+(i%3):'')+'" data-tec="'+esc(tecsDe(p).join(' '))+'"><span class="im"><img src="'+img(p.imagen)+'" alt="'+esc(p.imagenAlt)+'" loading="lazy"></span><span class="tx">'+
+      (p.reciclado?'<span class="sello-rec">Material recuperado</span>':'')+'<h3>'+esc(p.nombre)+'</h3><p>'+esc(p.resumen)+'</p><span class="min-plazo">Desde 100 u. · 10 a 15 días hábiles</span><span class="ficha"><span><i class="sw sw-'+esc(p.material)+'" aria-hidden="true"></i>'+esc(MAT[p.material]||(p.material==='carton'?'Cartón':''))+'</span>'+
       ((p.impresion||[]).length?'<span class="of">'+esc(p.impresion.join(' · '))+'</span>':'')+'</span></span></a>';
   }
 
@@ -81,6 +82,8 @@
     var h=sec('productos','intro'), f=sec('productos','filtros'), c=sec('productos','catalogo'), cta=sec('productos','cta');
     var html='<section class="cont pag-cab">'+ojal(h.eyebrow,true)+'<h1 class="h1 entra e2">'+esc(h.heading)+'</h1><div class="recuadro entra e3"><p class="sub">'+esc(h.subheading)+'</p>'+ps(h.paragraphs)+'</div></section>';
     html+='<nav class="filtros" aria-label="'+esc((f.notes||{}).ariaLabel||'Categorías de productos')+'"><div class="cont"><ul><span class="ind" aria-hidden="true"></span>'+(f.items||[]).map(function(it){var id=it.href.replace('#','');return '<li><button type="button" data-ir="'+esc(id)+'">'+esc(it.title)+'</button></li>';}).join('')+'</ul></div></nav>';
+    var TECS=[['todas','Todas'],['serigrafia','Serigrafía'],['sublimacion','Sublimación'],['bordado','Bordado']];
+    html+='<div class="cont filtro-tec rv" role="group" aria-label="Filtrar por técnica de impresión"><span>Técnica:</span>'+TECS.map(function(t,i){return '<button type="button" data-tec-f="'+t[0]+'" aria-pressed="'+(i?'false':'true')+'">'+t[1]+'</button>';}).join('')+'<em class="filtro-tec-n" aria-live="polite"></em></div>';
     var n=0;
     html+=(c.items||[]).map(function(cat){
       return '<section class="cont cat" id="cat-'+esc(cat.id)+'"><div class="cat-cab rv"><h2 class="h2">'+esc(cat.heading)+'</h2><span class="cuenta"><b>'+String(slugsCat(cat).length).padStart(2,'0')+'</b> '+(slugsCat(cat).length===1?'producto':'productos')+'</span></div>'+(cat.subheading?'<p class="lead rv">'+esc(cat.subheading)+'</p>':'')+
@@ -103,9 +106,10 @@
     var html='<nav class="cont migas" aria-label="Migas de pan"><a href="#/">Inicio</a><span>/</span><a href="#/productos">Productos</a><span>/</span><b>'+esc(p.nombre)+'</b></nav>';
     html+='<section class="cont g2 ficha-p"><div class="galeria entra e2"><div class="g-prin"><img id="gprin" src="'+img(gal[0].src)+'" alt="'+esc(gal[0].alt)+'"><span class="etq" aria-hidden="true">Hecho en Maipú<b>La Rañatela</b></span></div>'+(gal.length>1?'<div class="g-mini">'+gal.map(function(g,i){return '<button type="button" aria-label="Ver foto '+(i+1)+' de '+gal.length+'" aria-pressed="'+(i?'false':'true')+'" class="'+(i?'':'on')+'" data-src="'+img(g.src)+'" data-alt="'+esc(g.alt)+'"><img src="'+img(g.src)+'" alt="" loading="lazy"></button>';}).join('')+'</div>':'')+'</div>'+
       '<div class="pila entra e3">'+ojal(CATLAB[p.categoria],true)+'<h1 class="h1 h1-ficha">'+esc(p.nombre)+'</h1>'+(p.reciclado?'<span class="sello-rec">Confeccionado con material recuperado</span>':'')+'<p class="lead">'+esc(p.resumen)+'</p>'+
+      '<ul class="chips-ficha"><li><b>Desde 100 unidades</b></li><li><b>10 a 15 días hábiles</b></li>'+(p.impresion||[]).map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>'+
       '<h2 class="spec-t">Ficha técnica</h2><dl class="spec">'+spec.map(function(s,i){return '<div><dt>'+esc(s[0])+'</dt><dd>'+(i===0?'<i class="sw sw-'+esc(p.material)+'" aria-hidden="true"></i>':'')+esc(s[1])+'</dd></div>';}).join('')+'</dl></div></section>';
     html+='<section class="cont articulo corto">'+ps(p.body)+'</section>';
-    html+='<section class="cont sec-pad"><div class="caja rv"><div class="pila"><h2 class="h2">'+esc(cta.heading)+'</h2>'+ps(cta.paragraphs,'lead')+'<div class="fila-btn"><a class="btn" href="#/contacto?'+encodeURIComponent(p.nombre)+'">Pedir cotización</a><a class="btn am" href="'+wa('¡Hola! Vi la página de La Rañatela y quería consultar por '+p.nombre+'.')+'" target="_blank" rel="noopener">Consultar por WhatsApp</a>'+(['tote-lienzo','tote-brin','bolso-tote-grande','bolsa-friselina-manija-troquelada','portabotella-vino','mochila-cordon','gorra-trucker'].indexOf(p.slug)>=0?'<a class="btn am" href="#/personalizar?'+p.slug+'">Probá tu logo <span class="beta">Beta</span></a>':'')+'</div></div></div><p style="margin-top:24px"><a class="link" href="#/productos">← Volver al catálogo</a></p></section>';
+    html+='<section class="cont sec-pad"><div class="caja rv"><div class="pila"><h2 class="h2">'+esc(cta.heading)+'</h2>'+ps(cta.paragraphs,'lead')+'<div class="fila-btn"><a class="btn" href="#/contacto?producto='+encodeURIComponent(p.nombre)+'&cantidad=100'+((p.impresion||[]).length===1?'&tecnica='+encodeURIComponent(p.impresion[0]):'')+'">Cotizar este producto</a><a class="btn am" href="'+wa('¡Hola! Vi la página de La Rañatela y quería consultar por '+p.nombre+'.')+'" target="_blank" rel="noopener">Consultar por WhatsApp</a>'+(['tote-lienzo','tote-brin','bolso-tote-grande','bolsa-friselina-manija-troquelada','portabotella-vino','mochila-cordon','gorra-trucker'].indexOf(p.slug)>=0?'<a class="btn am" href="#/personalizar?'+p.slug+'">Probá tu logo <span class="beta">Beta</span></a>':'')+'</div>'+((p.impresion||[]).length>1?'<p class="cotizar-tec">O cotizalo directo en '+p.impresion.map(function(t){return '<a href="#/contacto?producto='+encodeURIComponent(p.nombre)+'&cantidad=100&tecnica='+encodeURIComponent(t)+'">'+esc(t.toLowerCase())+'</a>';}).join(' · ')+'.</p>':'')+'<p class="promesa">Te respondemos en 48 horas hábiles con un presupuesto sin cargo.</p></div></div><p style="margin-top:24px"><a class="link" href="#/productos">← Volver al catálogo</a></p></section>';
     return html;
   };
   var ICO={'Serigrafía':'M3 7h18v11H3z M7 4v3 M17 4v3 M6 14h12 M9 11h6','Sublimación':'M12 3c3 4 5 6.5 5 9.2a5 5 0 0 1-10 0C7 9.5 9 7 12 3z M5 21h14','Bordado':'M4 20L18 6 M16 4l4 4 M4 20c3-.5 5 1 8-.5s4-4 8-3.5','Diseño de producto':'M3 17L17 3l4 4L7 21z M7 13l2 2 M10 10l2 2 M13 7l2 2','Diseño gráfico':'M12 3l6 7-6 11-6-11z M12 3v8 M12 13.5v.01','Reciclado textil':'M20 12a8 8 0 0 1-14 5.3 M4 12a8 8 0 0 1 14-5.3 M18 3v4h-4 M6 21v-4h4'};
@@ -145,17 +149,18 @@
   };
   R.contacto=function(q){
     var h=sec('contacto','hero'), f=sec('contacto','formulario'), no=f.notes||{}, a=sec('contacto','aside-contacto'), sn=sec('contacto','aside-sentido'), st=sec('contacto','como-trabajamos');
-    var pre=q?decodeURIComponent(q):'';
+    var pre='',P={};try{if(q&&q.indexOf('=')>=0){q.split('&').forEach(function(kv){var i=kv.indexOf('=');if(i>0)P[decodeURIComponent(kv.slice(0,i))]=decodeURIComponent(kv.slice(i+1).replace(/\+/g,' '));});pre=P.producto||'';}else pre=q?decodeURIComponent(q):'';}catch(_){pre='';}
+    var preMsg=pre&&pre.indexOf('Personalizado:')===0?pre:(P.tecnica?'Técnica: '+P.tecnica+'.':'');
     function campo(c){
       var id='f-'+c.name, lab='<label for="'+id+'">'+esc(c.label)+(c.required?' <span aria-hidden="true">*</span>':'')+'</label>', req=c.required?' required':'';
       var inp;
       if(c.type==='select')inp='<select id="'+id+'" name="'+c.name+'"'+req+'>'+c.options.map(function(o){return '<option'+(o===pre?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
-      else if(c.type==='textarea')inp='<textarea id="'+id+'" name="'+c.name+'" rows="4"'+req+(c.placeholder?' placeholder="'+esc(c.placeholder)+'"':'')+'>'+(pre&&pre.indexOf('Personalizado:')===0?esc(pre):'')+'</textarea>';
-      else inp='<input id="'+id+'" name="'+c.name+'" type="'+c.type+'"'+req+(c.placeholder?' placeholder="'+esc(c.placeholder)+'"':'')+'>';
+      else if(c.type==='textarea')inp='<textarea id="'+id+'" name="'+c.name+'" rows="4"'+req+(c.placeholder?' placeholder="'+esc(c.placeholder)+'"':'')+'>'+esc(preMsg)+'</textarea>';
+      else inp='<input id="'+id+'" name="'+c.name+'" type="'+c.type+'"'+req+(c.placeholder?' placeholder="'+esc(c.placeholder)+'"':'')+(c.name==='cantidad'&&P.cantidad?' value="'+esc(P.cantidad)+'"':'')+'>';
       return '<div class="'+(c.type==='textarea'||c.name==='producto'||c.name==='medidas'?'s2':'')+'">'+lab+inp+(c.help?'<small>'+esc(c.help)+'</small>':'')+'</div>';
     }
     var html=cabecera(h);
-    html+='<section class="cont g-contacto"><form class="form form-largo rv" id="form" novalidate><h2 class="sr">'+esc(f.heading)+'</h2>'+(no.fieldsets||[]).map(function(fs){return '<fieldset><legend>'+esc(fs.legend)+'</legend><div class="campos">'+fs.fields.map(campo).join('')+'</div></fieldset>';}).join('')+
+    html+='<section class="cont g-contacto"><form class="form form-largo rv" id="form" novalidate><h2 class="sr">'+esc(f.heading)+'</h2>'+(pre&&pre.indexOf('Personalizado:')!==0&&P.producto?'<p class="form-pre"><b>Cotización de '+esc(pre)+'</b>'+(P.tecnica?' en '+esc(P.tecnica.toLowerCase()):'')+'. Te respondemos en 48 horas hábiles.</p>':'<p class="form-pre">Te respondemos en 48 horas hábiles con un presupuesto sin cargo.</p>')+(no.fieldsets||[]).map(function(fs){return '<fieldset><legend>'+esc(fs.legend)+'</legend><div class="campos">'+fs.fields.map(campo).join('')+'</div></fieldset>';}).join('')+
       (window.__adjuntosPZ?'<div class="adj-pz" role="note"><b>Se envía con tu consulta</b><span>'+window.__adjuntosPZ.archivos.map(function(a){return esc(a.nombre==='vegetal.pdf'?'Vegetal a medida exacta':a.nombre==='sublimacion.pdf'?'Imagen para sublimar':a.nombre==='mockup-frente.png'?'Mockup del frente':a.nombre==='mockup-dorso.png'?'Mockup del dorso':a.nombre.indexOf('logo')===0?'Tu logo original':'Mockup del producto');}).join(' · ')+'</span></div>':'')+
       '<button type="submit" class="btn">'+esc(no.submit||'Enviar consulta')+'</button><p class="nota">'+esc(no.footnote)+'</p></form>';
     html+='<aside class="pila rv d2"><div class="tarj"><h2 class="h3">'+esc(a.heading)+'</h2><dl class="spec">'+(a.items||[]).map(function(it){return '<div><dt>'+esc(it.title)+'</dt><dd>'+(it.href?'<a href="'+esc(it.href)+'" target="_blank" rel="noopener">'+esc(it.text)+'</a>':esc(it.text))+'</dd></div>';}).join('')+'</dl></div>'+
@@ -291,6 +296,15 @@
   };
 
   // EMPRESAS: soluciones profesionales
+  // Para el área de compras: razones concretas, verificables, sin apelar a la lástima
+  function porQueComprar(){
+    var it=[
+      ['Un proveedor, no una donación','Facturamos como cualquier proveedor, con presupuesto previo, orden de compra y plazo de entrega comprometido. Lo que cambia es quién lo fabrica: un equipo de más de 100 trabajadores con discapacidad, con empleo formal.'],
+      ['Prioridad en compras del Estado','La Ley 22.431 (art. 8 bis) obliga al Estado nacional, sus organismos, empresas estatales y concesionarias de servicios públicos a priorizar, a igual costo, las compras a empresas que contratan personas con discapacidad. Si tu organización está en ese grupo, comprarle a La Rañatela cumple con esa prioridad.'],
+      ['Taller protegido con régimen propio','La Rañatela trabaja bajo el Régimen Federal de Empleo Protegido (Ley 26.816), que establece preferencias para los talleres protegidos de producción en las contrataciones del sector público nacional (Decreto 1771/2015).'],
+      ['Un dato para tu reporte','Cada pedido sostiene puestos de trabajo formales en Maipú y, si elegís la línea de reciclado, recupera material que iba a descarte. Te damos los datos del pedido (unidades, horas de trabajo, kilos recuperados) para tu reporte de sostenibilidad o de compras inclusivas.']
+    ];
+    return '<section class="cont sec-pad porque"><div class="cat-cab rv"><h2 class="h2">Por qué comprarle a La Rañatela</h2><span class="cuenta">Para el área de compras</span></div><div class="g2 porque-g">'+it.map(function(x,i){return '<article class="rv'+(i?' d'+Math.min(3,i):'')+'"><h3>'+x[0]+'</h3><p>'+x[1]+'</p></article>';}).join('')+'</div><p class="porque-nota rv">Las referencias legales son orientativas: cada organismo aplica su propia reglamentación de compras. Si tu área legal necesita la documentación, te la mandamos. <a href="#/contacto?producto='+encodeURIComponent('Todavía no lo tengo definido')+'">Pedila acá</a>.</p></section>';}
   R.empresas=function(q){
     var t=sec('servicios','tecnicas'), ta=sec('servicios','taller'), rc=sec('servicios','reciclado'), st=sec('contacto','como-trabajamos');
     function vid(v,son){v=v||{};return '<div class="video rv d2"><video src="'+img(v.src)+'" poster="'+img(v.poster)+'" muted loop playsinline autoplay preload="none"></video>'+(son?botonSonido():'')+'</div>';}
@@ -298,6 +312,7 @@
       '<ul class="datos-b2b entra e4"><li><b>100</b> unidades de pedido mínimo</li><li><b>10–15</b> días hábiles de producción</li><li><b>100%</b> a medida: material, tamaño y gráfica</li></ul></section>';
     html+='<section class="cont" style="padding-bottom:clamp(56px,7vw,96px)">'+solucionesGrid(true)+'</section>';
     html+='<section aria-label="Confiaron en nosotros" style="padding-bottom:clamp(56px,7vw,96px);position:relative;z-index:1"><div class="cont rv">'+ojal('Confiaron en nosotros')+'</div>'+logosConfianza()+'</section>';
+    html+=porQueComprar();
     html+='<section class="banda"><div class="cont sec-pad"><h2 class="h2 rv">'+esc(st.heading)+'</h2><ol class="linea pasos rv">'+(st.items||[]).map(function(it,i){return '<li class="rv'+(i?' d'+Math.min(3,i):'')+'"><span class="an">0'+it.number+'</span><h3>'+esc(it.title)+'</h3><p>'+esc(it.text)+'</p></li>';}).join('')+'</ol></div></section>';
     html+='<section class="cont sec-pad"><h2 class="h2 rv">'+esc(t.heading)+'</h2>'+ps(t.paragraphs,'lead rv mt16')+'<div class="g3 tarjetas">'+(t.items||[]).map(function(it,i){return '<article class="tarj rv'+(i?' d'+i:'')+'">'+ico(it.title)+'<h3>'+esc(it.title)+'</h3><p>'+esc(it.text)+'</p><ul>'+(it.bullets||[]).map(function(b){return '<li>'+esc(b)+'</li>';}).join('')+'</ul></article>';}).join('')+'</div></section>';
     html+='<section class="banda"><div class="cont g2 sec-pad"><div class="rv pila"><h2 class="h2">'+esc(ta.heading)+'</h2>'+ps(ta.paragraphs,'lead')+'</div>'+vid((ta.videos||[])[0],true)+'</div></section>';
@@ -1276,6 +1291,7 @@
     var md=document.querySelector('meta[name=description]'); if(!md){md=document.createElement('meta');md.name='description';document.head.appendChild(md);}
     var pk={personalizar:'productos',tejiendo:'inicio',empresas:'servicios',nosotros:'historia',eti:'inicio',inicio:'inicio',historia:'historia',productos:'productos',servicios:'servicios',novedades:'novedades',contacto:'contacto',privacidad:'privacidad',terapia:'terapia-ocupacional','404':'404',gracias:'contacto-gracias'}[rt.r];
     var pr=rt.r==='ficha'?prodPorSlug(rt.arg):null; md.content=pr?pr.resumen:((D.pages[pk]||{}).description||'');
+    seoRuta(rt,pr);
     app.querySelectorAll('.pag-cab .h1, .hero .h1, .poster .h1, .ficha-p .h1').forEach(partir);
     filtros();
     if(window.__banners)window.__banners(app);
@@ -1306,6 +1322,9 @@
   // interacciones de las páginas
   document.addEventListener('click',function(e){
     var b=e.target.closest('[data-ir]'); if(b){var el=document.getElementById('cat-'+b.getAttribute('data-ir')); if(el)el.scrollIntoView({behavior:'smooth',block:'start'}); return;}
+    var tf=e.target.closest('[data-tec-f]'); if(tf){var tec=tf.getAttribute('data-tec-f'),tot=0;document.querySelectorAll('[data-tec-f]').forEach(function(x){x.setAttribute('aria-pressed',String(x===tf));});
+      document.querySelectorAll('.cat').forEach(function(cat){var vis=0;cat.querySelectorAll('.prod').forEach(function(c){var ok=tec==='todas'||(c.getAttribute('data-tec')||'').split(' ').indexOf(tec)>=0;c.hidden=!ok;if(ok)vis++;});cat.hidden=!vis;tot+=vis;var cu=cat.querySelector('.cuenta');if(cu)cu.innerHTML='<b>'+String(vis).padStart(2,'0')+'</b> '+(vis===1?'producto':'productos');});
+      var nn=document.querySelector('.filtro-tec-n');if(nn)nn.textContent=tec==='todas'?'':tot+(tot===1?' producto admite ':' productos admiten ')+tf.textContent.toLowerCase()+'.';return;}
     var g=e.target.closest('.g-mini button'); if(g){var pr=document.getElementById('gprin'); pr.src=g.getAttribute('data-src'); pr.alt=g.getAttribute('data-alt'); [].forEach.call(g.parentNode.children,function(x){x.classList.toggle('on',x===g);x.setAttribute('aria-pressed',x===g?'true':'false');});}
   });
   // Imágenes diferidas: aparecen con un fundido cuando terminan de cargar (o si fallan, para no quedar invisibles).
@@ -1332,5 +1351,24 @@
     [].forEach.call(f.elements,function(el){if(el.name)datos[el.name]=el.value;});var adj=window.__adjuntosPZ;if(adj)datos.resumen=adj.resumen;
     btn.disabled=true;btn.textContent='Enviando…';
     window.__enviarPedido(datos,adj).then(function(r){if(r&&r.simulado){btn.disabled=false;btn.textContent='Enviar consulta';sinEnvio(f,MAIL_PEDIDOS);return;}window.__adjuntosPZ=null;location.hash='#/contacto/gracias';},function(){btn.disabled=false;btn.textContent='Reintentar envío';var m=f.querySelector('.form-error')||f.appendChild(document.createElement('p'));m.className='form-error';m.setAttribute('role','alert');m.textContent='No pudimos enviar tu consulta. Probá de nuevo o escribinos por WhatsApp.';}); });
+  // SEO: datos estructurados (LocalBusiness + Product) y Open Graph por ruta. Se leen aunque el sitio sea estático.
+  var BASE_URL=(location.origin+location.pathname).replace(/index\.html$/,'');
+  function seoRuta(rt,pr){
+    var org={'@type':['LocalBusiness','Organization'],'@id':BASE_URL+'#org',name:'La Rañatela',description:(D.pages.inicio||{}).description||'',url:BASE_URL,telephone:'+54 261 534 1275',email:'info.laranatela@gmail.com',image:BASE_URL+'img/fot-taller-armado.jpg',
+      address:{'@type':'PostalAddress',streetAddress:'J. B. Martínez 200',addressLocality:'Maipú',addressRegion:'Mendoza',addressCountry:'AR'},areaServed:'Argentina',foundingDate:'2009',
+      openingHoursSpecification:[{'@type':'OpeningHoursSpecification',dayOfWeek:['Monday','Tuesday','Wednesday','Thursday','Friday'],opens:'09:00',closes:'16:00'}],
+      sameAs:[REDES0&&REDES0.instagram,REDES0&&REDES0.tiktok,REDES0&&REDES0.linkedin].filter(Boolean),knowsAbout:['bolsas personalizadas','mochilas personalizadas','merchandising corporativo','serigrafía','sublimación','bordado','regalos empresariales','Mendoza']};
+    var graph=[org];
+    if(pr){graph.push({'@type':'Product','@id':BASE_URL+'#/productos/'+pr.slug,name:pr.nombre,description:pr.resumen,image:BASE_URL+img(pr.imagen).replace(/^\.?\//,''),brand:{'@type':'Brand',name:'La Rañatela'},manufacturer:{'@id':BASE_URL+'#org'},material:MAT[pr.material]||pr.material,category:CATLAB[pr.categoria]||'',
+      offers:{'@type':'Offer',availability:'https://schema.org/MadeToOrder',priceCurrency:'ARS',eligibleQuantity:{'@type':'QuantitativeValue',minValue:100,unitText:'unidades'},seller:{'@id':BASE_URL+'#org'}}});}
+    else if(rt.r==='productos'){graph.push({'@type':'ItemList',name:'Catálogo de La Rañatela',itemListElement:D.productos.filter(function(p){return !p.oculto;}).slice(0,30).map(function(p,i){return {'@type':'ListItem',position:i+1,name:p.nombre,url:BASE_URL+'#/productos/'+p.slug};})});}
+    graph.push({'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'Inicio',item:BASE_URL}].concat(rt.r==='inicio'?[]:[{'@type':'ListItem',position:2,name:rt.label,item:BASE_URL+'#/'+(rt.r==='ficha'?'productos/'+rt.arg:rt.r)}])});
+    var ld=document.getElementById('ld-json');if(!ld){ld=document.createElement('script');ld.type='application/ld+json';ld.id='ld-json';document.head.appendChild(ld);}
+    ld.textContent=JSON.stringify({'@context':'https://schema.org','@graph':graph});
+    function og(p,v){var m=document.querySelector('meta[property="'+p+'"]');if(!m){m=document.createElement('meta');m.setAttribute('property',p);document.head.appendChild(m);}m.content=v||'';}
+    og('og:site_name','La Rañatela');og('og:type',pr?'product':'website');og('og:title',document.title);og('og:description',document.querySelector('meta[name=description]').content);og('og:url',BASE_URL+(rt.r==='inicio'?'':'#/'+(rt.r==='ficha'?'productos/'+rt.arg:rt.r)));og('og:image',BASE_URL+(pr?img(pr.imagen).replace(/^\.?\//,''):'img/fot-taller-armado.jpg'));og('og:locale','es_AR');
+    var tw=document.querySelector('meta[name="twitter:card"]');if(!tw){tw=document.createElement('meta');tw.name='twitter:card';tw.content='summary_large_image';document.head.appendChild(tw);}
+    var cn=document.querySelector('link[rel=canonical]');if(!cn){cn=document.createElement('link');cn.rel='canonical';document.head.appendChild(cn);}cn.href=BASE_URL+(rt.r==='inicio'?'':'#/'+(rt.r==='ficha'?'productos/'+rt.arg:rt.r));
+  }
   ir();
 })();
