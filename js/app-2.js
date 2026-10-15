@@ -39,7 +39,7 @@
   function tecsDe(p){return (p.impresion||[]).map(function(t){return t.toLowerCase().replace(/ó/g,'o').replace(/í/g,'i');});}
   function tarjetaProd(p,i){
     return '<a href="#/productos/'+esc(p.slug)+'" class="prod rv'+(i%3?' d'+(i%3):'')+'" data-tec="'+esc(tecsDe(p).join(' '))+'"><span class="im'+(p.imagen?'':' sin-foto')+'">'+(p.imagen?'<img src="'+img(p.imagen)+'" alt="'+esc(p.imagenAlt)+'" loading="lazy">':'<span class="sf"><b>Foto en camino</b><i>'+esc(p.nombre)+'</i></span>')+'</span><span class="tx">'+
-      (p.reciclado?'<span class="sello-rec">Material recuperado</span>':'')+'<h3>'+esc(p.nombre)+'</h3><p>'+esc(p.resumen)+'</p><span class="min-plazo">Desde 100 u. · 10 a 15 días hábiles</span><span class="ficha"><span><i class="sw sw-'+esc(p.material)+'" aria-hidden="true"></i>'+esc(MAT[p.material]||(p.material==='carton'?'Cartón':''))+'</span>'+
+      (p.reciclado?'<span class="sello-rec">Material recuperado</span>':'')+'<h3>'+esc(p.nombre)+'</h3><p>'+esc(p.resumen)+'</p><span class="min-plazo">Desde 5 días hábiles</span><span class="ficha"><span><i class="sw sw-'+esc(p.material)+'" aria-hidden="true"></i>'+esc(MAT[p.material]||(p.material==='carton'?'Cartón':''))+'</span>'+
       ((p.impresion||[]).length?'<span class="of">'+esc(p.impresion.join(' · '))+'</span>':'')+'</span></span></a>';
   }
 
@@ -102,11 +102,11 @@
     if((p.impresion||[]).length)spec.push(['Personalización',p.impresion.join(', ')]);
     if(p.materialFijo===false)spec.push(['Otras opciones de tela',(p.materialesAlternativos||[]).length?'También en '+p.materialesAlternativos.map(function(m){return MAT[m]||m;}).join(', ')+'.':'También podemos confeccionarlo en friselina, gabardina o lienzo. Consultanos si necesitás otra tela.']);
     spec.push(['Pedido mínimo','100 unidades']);
-    spec.push(['Plazo de entrega','10 a 15 días hábiles']);
+    spec.push(['Plazo de entrega','Desde 5 días hábiles']);
     var html='<nav class="cont migas" aria-label="Migas de pan"><a href="#/">Inicio</a><span>/</span><a href="#/productos">Productos</a><span>/</span><b>'+esc(p.nombre)+'</b></nav>';
     html+='<section class="cont g2 ficha-p"><div class="galeria entra e2"><div class="g-prin'+(p.imagen?'':' sin-foto')+'">'+(p.imagen?'<img id="gprin" src="'+img(gal[0].src)+'" alt="'+esc(gal[0].alt)+'">':'<span class="sf"><b>Foto en camino</b><i>Estamos fotografiando este producto. Pedinos imágenes por WhatsApp.</i></span>')+'<span class="etq" aria-hidden="true">Hecho en Maipú<b>La Rañatela</b></span></div>'+(gal.length>1?'<div class="g-mini">'+gal.map(function(g,i){return '<button type="button" aria-label="Ver foto '+(i+1)+' de '+gal.length+'" aria-pressed="'+(i?'false':'true')+'" class="'+(i?'':'on')+'" data-src="'+img(g.src)+'" data-alt="'+esc(g.alt)+'"><img src="'+img(g.src)+'" alt="" loading="lazy"></button>';}).join('')+'</div>':'')+'</div>'+
       '<div class="pila entra e3">'+ojal(CATLAB[p.categoria],true)+'<h1 class="h1 h1-ficha">'+esc(p.nombre)+'</h1>'+(p.reciclado?'<span class="sello-rec">Confeccionado con material recuperado</span>':'')+'<p class="lead">'+esc(p.resumen)+'</p>'+
-      '<ul class="chips-ficha"><li><b>Desde 100 unidades</b></li><li><b>10 a 15 días hábiles</b></li>'+(p.impresion||[]).map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>'+
+      '<ul class="chips-ficha"><li><b>Desde 100 unidades</b></li><li><b>Desde 5 días hábiles</b></li>'+(p.impresion||[]).map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>'+
       '<h2 class="spec-t">Ficha técnica</h2><dl class="spec">'+spec.map(function(s,i){return '<div><dt>'+esc(s[0])+'</dt><dd>'+(i===0?'<i class="sw sw-'+esc(p.material)+'" aria-hidden="true"></i>':'')+esc(s[1])+'</dd></div>';}).join('')+'</dl></div></section>';
     html+='<section class="cont articulo corto">'+ps(p.body)+'</section>';
     html+='<section class="cont sec-pad"><div class="caja rv"><div class="pila"><h2 class="h2">'+esc(cta.heading)+'</h2>'+ps(cta.paragraphs,'lead')+'<div class="fila-btn"><a class="btn" href="#/contacto?producto='+encodeURIComponent(p.nombre)+'&cantidad=100'+((p.impresion||[]).length===1?'&tecnica='+encodeURIComponent(p.impresion[0]):'')+'">Cotizar este producto</a><a class="btn am" href="'+wa('¡Hola! Vi la página de La Rañatela y quería consultar por '+p.nombre+'.')+'" target="_blank" rel="noopener">Consultar por WhatsApp</a>'+(['tote-lienzo','tote-brin','bolso-tote-grande','bolsa-friselina-manija-troquelada','portabotella-vino','mochila-cordon','gorra-trucker'].indexOf(p.slug)>=0?'<a class="btn am" href="#/personalizar?'+p.slug+'">Probá tu logo <span class="beta">Beta</span></a>':'')+'</div>'+((p.impresion||[]).length>1?'<p class="cotizar-tec">O cotizalo directo en '+p.impresion.map(function(t){return '<a href="#/contacto?producto='+encodeURIComponent(p.nombre)+'&cantidad=100&tecnica='+encodeURIComponent(t)+'">'+esc(t.toLowerCase())+'</a>';}).join(' · ')+'.</p>':'')+'<p class="promesa">Te respondemos en 48 horas hábiles con un presupuesto sin cargo.</p></div></div><p style="margin-top:24px"><a class="link" href="#/productos">← Volver al catálogo</a></p></section>';
@@ -280,7 +280,7 @@
     var col=['tote-lienzo','mochila-urbana','set-matero'].map(prodPorSlug).filter(Boolean);
     var html='<section class="cont hero hero-prod g2"><div class="col">'+ojal('Hecho en Maipú, Mendoza · desde 2009',true)+
       '<h1 class="h1">Merchandising y productos textiles <span style="color:var(--accent)">con la imagen de tu empresa</span></h1>'+
-      '<p class="lead entra e3">Diseñamos, confeccionamos y personalizamos en nuestro propio taller: merchandising, ropa de trabajo y deportiva, y packaging con tu marca. Pedidos desde 100 unidades, en 10 a 15 días hábiles.</p>'+
+      '<p class="lead entra e3">Diseñamos, confeccionamos y personalizamos en nuestro propio taller: merchandising, ropa de trabajo y deportiva, y packaging con tu marca. Entregas desde 5 días hábiles.</p>'+
       '<div class="entra e4 fila-btn"><a class="btn" href="#/productos">Ver catálogo</a><a class="btn am" href="#/contacto">Pedir presupuesto</a></div></div>'+
       '<div class="collage entra e3">'+col.map(function(p,i){return '<a class="col-'+i+'" href="#/productos/'+p.slug+'"><img src="'+img(p.imagen)+'" alt="'+esc(p.imagenAlt)+'"'+(i?' loading="lazy"':'')+'><span>'+esc(p.nombre)+'</span></a>';}).join('')+'</div></section>';
     html+='<section aria-label="Confiaron en nosotros" style="padding-block:clamp(8px,2vw,24px) clamp(40px,5vw,64px);position:relative;z-index:1"><div class="cont rv">'+ojal('Confiaron en nosotros')+'<h2 class="h2" style="margin:10px 0 28px">Trabajamos para empresas de primera línea</h2></div>'+logosConfianza()+'</section>';
@@ -301,7 +301,7 @@
       ['Un proveedor, no una donación','Facturamos como cualquier proveedor: ofrecemos factura A o C de acuerdo a las modalidades o exigencias del cliente. Pago de contado, por transferencia, Mercado Pago o cheque a 30, 60 o 90 días, a acordar con cada cliente. Lo que cambia es quién lo fabrica: un equipo de más de 100 trabajadores con discapacidad, con empleo formal.'],
       ['Prioridad en compras del Estado','La Ley 22.431 (art. 8 bis) obliga al Estado nacional, sus organismos, empresas estatales y concesionarias de servicios públicos a priorizar, a igual costo, las compras a empresas que contratan personas con discapacidad. Si tu organización está en ese grupo, comprarle a La Rañatela cumple con esa prioridad.'],
       ['Taller protegido con régimen propio','La Rañatela está inscripta en el Régimen Federal de Empleo Protegido (Ley 26.816) como Taller Protegido Especial para el Empleo (TPEE). El régimen establece preferencias para los talleres protegidos en las contrataciones del sector público nacional (Decreto 1771/2015).'],
-      ['Plazos reales','Pedidos desde 100 unidades, con entrega en 10 a 15 días hábiles según el volumen, el momento del año y la disponibilidad del taller. Los pedidos grandes de fin de año conviene reservarlos con meses de anticipación.'],
+      ['Plazos reales','Desde 5 días hábiles, según el volumen, el momento del año y la disponibilidad del taller. Los pedidos grandes de fin de año conviene reservarlos con meses de anticipación.'],
       ['Un dato para tu reporte','Cada pedido sostiene puestos de trabajo formales en Maipú y, si elegís la línea de reciclado, recupera material que iba a descarte. Te damos los datos del pedido (unidades, horas de trabajo, kilos recuperados) para tu reporte de sostenibilidad o de compras inclusivas.']
     ];
   function porQueComprar(){
@@ -354,7 +354,7 @@
     var t=sec('servicios','tecnicas'), ta=sec('servicios','taller'), rc=sec('servicios','reciclado'), st=sec('contacto','como-trabajamos');
     function vid(v,son){v=v||{};return '<div class="video rv d2"><video src="'+img(v.src)+'" poster="'+img(v.poster)+'" muted loop playsinline autoplay preload="none"></video>'+(son?botonSonido():'')+'</div>';}
     var html='<section class="cont pag-cab">'+ojal('Para empresas',true)+'<h1 class="h1">Soluciones para empresas</h1><p class="lead entra e3">Regalos, merchandising, packaging y kits para eventos, hechos a medida en nuestro taller de Maipú. Te asesoramos desde la idea hasta la entrega.</p><div class="fila-btn entra e4"><a class="btn" href="#/contacto">Pedir presupuesto</a><a class="btn am" href="#/personalizar">Probá tu logo <span class="beta">Beta</span></a><a class="btn am" href="'+CATALOGO_PDF+'" target="_blank" rel="noopener">Descargar catálogo (PDF)</a></div>'+
-      '<ul class="datos-b2b entra e4"><li><b>100</b> unidades de pedido mínimo</li><li><b>10–15</b> días hábiles de producción</li><li><b>100%</b> a medida: material, tamaño y gráfica</li></ul></section>';
+      '<ul class="datos-b2b entra e4"><li><b>100</b> unidades de pedido mínimo</li><li><b>Desde 5</b> días hábiles de entrega</li><li><b>100%</b> a medida: material, tamaño y gráfica</li></ul></section>';
     html+='<section class="cont" style="padding-bottom:clamp(56px,7vw,96px)">'+solucionesGrid(true)+'</section>';
     html+='<section aria-label="Confiaron en nosotros" style="padding-bottom:clamp(56px,7vw,96px);position:relative;z-index:1"><div class="cont rv">'+ojal('Confiaron en nosotros')+'</div>'+logosConfianza()+'</section>';
     html+=casosClientes();
@@ -585,7 +585,7 @@
   function diasHabiles(n){var d=new Date(),k=0;while(k<n){d.setDate(d.getDate()+1);var w=d.getDay();if(w&&w<6)k++;}return d;}
   function pzEstimar(){var p=PRESETS[PZ.p],t=p.tecnicas[PZ.tec],cols=PZ.anal?Math.max(1,PZ.anal.colores):1,q=PZ.cant;
     var extra=Math.ceil(Math.max(0,q-300)/300)*2+(t==='ser'?Math.max(0,cols-2):0)+(t==='bor'?3:t==='sub'?1:0)+(esBolsa()&&(PZ.W!==p.cm[0]||PZ.H!==p.cm[1])?2:0);
-    return {min:10+extra,max:15+extra};}
+    return {min:5+extra,max:10+extra};}
   function hexDe(r,g,b){return '#'+[r,g,b].map(function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16);}).join('');}
   function pzLeer(src,cb){var im=new Image();im.onload=function(){
       var k=Math.min(1,400/Math.max(im.width,im.height)),w=Math.max(1,Math.round(im.width*k)),h=Math.max(1,Math.round(im.height*k)),cv=document.createElement('canvas');cv.width=w;cv.height=h;
