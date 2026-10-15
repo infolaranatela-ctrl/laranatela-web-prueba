@@ -38,7 +38,7 @@
 
   function tecsDe(p){return (p.impresion||[]).map(function(t){return t.toLowerCase().replace(/ó/g,'o').replace(/í/g,'i');});}
   function tarjetaProd(p,i){
-    return '<a href="#/productos/'+esc(p.slug)+'" class="prod rv'+(i%3?' d'+(i%3):'')+'" data-tec="'+esc(tecsDe(p).join(' '))+'"><span class="im"><img src="'+img(p.imagen)+'" alt="'+esc(p.imagenAlt)+'" loading="lazy"></span><span class="tx">'+
+    return '<a href="#/productos/'+esc(p.slug)+'" class="prod rv'+(i%3?' d'+(i%3):'')+'" data-tec="'+esc(tecsDe(p).join(' '))+'"><span class="im'+(p.imagen?'':' sin-foto')+'">'+(p.imagen?'<img src="'+img(p.imagen)+'" alt="'+esc(p.imagenAlt)+'" loading="lazy">':'<span class="sf"><b>Foto en camino</b><i>'+esc(p.nombre)+'</i></span>')+'</span><span class="tx">'+
       (p.reciclado?'<span class="sello-rec">Material recuperado</span>':'')+'<h3>'+esc(p.nombre)+'</h3><p>'+esc(p.resumen)+'</p><span class="min-plazo">Desde 100 u. · 10 a 15 días hábiles</span><span class="ficha"><span><i class="sw sw-'+esc(p.material)+'" aria-hidden="true"></i>'+esc(MAT[p.material]||(p.material==='carton'?'Cartón':''))+'</span>'+
       ((p.impresion||[]).length?'<span class="of">'+esc(p.impresion.join(' · '))+'</span>':'')+'</span></span></a>';
   }
@@ -104,7 +104,7 @@
     spec.push(['Pedido mínimo','100 unidades']);
     spec.push(['Plazo de entrega','10 a 15 días hábiles']);
     var html='<nav class="cont migas" aria-label="Migas de pan"><a href="#/">Inicio</a><span>/</span><a href="#/productos">Productos</a><span>/</span><b>'+esc(p.nombre)+'</b></nav>';
-    html+='<section class="cont g2 ficha-p"><div class="galeria entra e2"><div class="g-prin"><img id="gprin" src="'+img(gal[0].src)+'" alt="'+esc(gal[0].alt)+'"><span class="etq" aria-hidden="true">Hecho en Maipú<b>La Rañatela</b></span></div>'+(gal.length>1?'<div class="g-mini">'+gal.map(function(g,i){return '<button type="button" aria-label="Ver foto '+(i+1)+' de '+gal.length+'" aria-pressed="'+(i?'false':'true')+'" class="'+(i?'':'on')+'" data-src="'+img(g.src)+'" data-alt="'+esc(g.alt)+'"><img src="'+img(g.src)+'" alt="" loading="lazy"></button>';}).join('')+'</div>':'')+'</div>'+
+    html+='<section class="cont g2 ficha-p"><div class="galeria entra e2"><div class="g-prin'+(p.imagen?'':' sin-foto')+'">'+(p.imagen?'<img id="gprin" src="'+img(gal[0].src)+'" alt="'+esc(gal[0].alt)+'">':'<span class="sf"><b>Foto en camino</b><i>Estamos fotografiando este producto. Pedinos imágenes por WhatsApp.</i></span>')+'<span class="etq" aria-hidden="true">Hecho en Maipú<b>La Rañatela</b></span></div>'+(gal.length>1?'<div class="g-mini">'+gal.map(function(g,i){return '<button type="button" aria-label="Ver foto '+(i+1)+' de '+gal.length+'" aria-pressed="'+(i?'false':'true')+'" class="'+(i?'':'on')+'" data-src="'+img(g.src)+'" data-alt="'+esc(g.alt)+'"><img src="'+img(g.src)+'" alt="" loading="lazy"></button>';}).join('')+'</div>':'')+'</div>'+
       '<div class="pila entra e3">'+ojal(CATLAB[p.categoria],true)+'<h1 class="h1 h1-ficha">'+esc(p.nombre)+'</h1>'+(p.reciclado?'<span class="sello-rec">Confeccionado con material recuperado</span>':'')+'<p class="lead">'+esc(p.resumen)+'</p>'+
       '<ul class="chips-ficha"><li><b>Desde 100 unidades</b></li><li><b>10 a 15 días hábiles</b></li>'+(p.impresion||[]).map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>'+
       '<h2 class="spec-t">Ficha técnica</h2><dl class="spec">'+spec.map(function(s,i){return '<div><dt>'+esc(s[0])+'</dt><dd>'+(i===0?'<i class="sw sw-'+esc(p.material)+'" aria-hidden="true"></i>':'')+esc(s[1])+'</dd></div>';}).join('')+'</dl></div></section>';
@@ -112,7 +112,7 @@
     html+='<section class="cont sec-pad"><div class="caja rv"><div class="pila"><h2 class="h2">'+esc(cta.heading)+'</h2>'+ps(cta.paragraphs,'lead')+'<div class="fila-btn"><a class="btn" href="#/contacto?producto='+encodeURIComponent(p.nombre)+'&cantidad=100'+((p.impresion||[]).length===1?'&tecnica='+encodeURIComponent(p.impresion[0]):'')+'">Cotizar este producto</a><a class="btn am" href="'+wa('¡Hola! Vi la página de La Rañatela y quería consultar por '+p.nombre+'.')+'" target="_blank" rel="noopener">Consultar por WhatsApp</a>'+(['tote-lienzo','tote-brin','bolso-tote-grande','bolsa-friselina-manija-troquelada','portabotella-vino','mochila-cordon','gorra-trucker'].indexOf(p.slug)>=0?'<a class="btn am" href="#/personalizar?'+p.slug+'">Probá tu logo <span class="beta">Beta</span></a>':'')+'</div>'+((p.impresion||[]).length>1?'<p class="cotizar-tec">O cotizalo directo en '+p.impresion.map(function(t){return '<a href="#/contacto?producto='+encodeURIComponent(p.nombre)+'&cantidad=100&tecnica='+encodeURIComponent(t)+'">'+esc(t.toLowerCase())+'</a>';}).join(' · ')+'.</p>':'')+'<p class="promesa">Te respondemos en 48 horas hábiles con un presupuesto sin cargo.</p></div></div><p style="margin-top:24px"><a class="link" href="#/productos">← Volver al catálogo</a></p></section>';
     return html;
   };
-  var ICO={'Serigrafía':'M3 7h18v11H3z M7 4v3 M17 4v3 M6 14h12 M9 11h6','Sublimación':'M12 3c3 4 5 6.5 5 9.2a5 5 0 0 1-10 0C7 9.5 9 7 12 3z M5 21h14','Bordado':'M4 20L18 6 M16 4l4 4 M4 20c3-.5 5 1 8-.5s4-4 8-3.5','Diseño de producto':'M3 17L17 3l4 4L7 21z M7 13l2 2 M10 10l2 2 M13 7l2 2','Diseño gráfico':'M12 3l6 7-6 11-6-11z M12 3v8 M12 13.5v.01','Reciclado textil':'M20 12a8 8 0 0 1-14 5.3 M4 12a8 8 0 0 1 14-5.3 M18 3v4h-4 M6 21v-4h4'};
+  var ICO={'DTF':'M4 4h16v16H4z M8 8h8v8H8z M12 8v8 M8 12h8','Plotter':'M4 6h16 M4 18h16 M8 6v12 M16 6v12 M12 9l3 3-3 3','Serigrafía':'M3 7h18v11H3z M7 4v3 M17 4v3 M6 14h12 M9 11h6','Sublimación':'M12 3c3 4 5 6.5 5 9.2a5 5 0 0 1-10 0C7 9.5 9 7 12 3z M5 21h14','Bordado':'M4 20L18 6 M16 4l4 4 M4 20c3-.5 5 1 8-.5s4-4 8-3.5','Diseño de producto':'M3 17L17 3l4 4L7 21z M7 13l2 2 M10 10l2 2 M13 7l2 2','Diseño gráfico':'M12 3l6 7-6 11-6-11z M12 3v8 M12 13.5v.01','Reciclado textil':'M20 12a8 8 0 0 1-14 5.3 M4 12a8 8 0 0 1 14-5.3 M18 3v4h-4 M6 21v-4h4'};
   function ico(t){var d=ICO[t];return d?'<span class="ico-l" aria-hidden="true"><svg viewBox="0 0 24 24">'+d.split(' M').map(function(x,i){return '<path pathLength="1" d="'+(i?'M':'')+x+'"/>';}).join('')+'</svg></span>':'';}
   R.servicios=function(){
     var h=sec('servicios','hero'), t=sec('servicios','tecnicas'), ta=sec('servicios','taller'), co=sec('servicios','complementarios'), rc=sec('servicios','reciclado'), as=sec('servicios','asesoramiento');
@@ -175,7 +175,7 @@
   R['404']=function(){var s=sec('404','error');return '<section class="cont pag-cab">'+ojal(s.eyebrow,true)+'<h1 class="h1 entra e2">'+esc(s.heading)+'</h1><p class="lead">'+esc(s.paragraphs[0])+'</p><div class="fila-btn">'+btns(s.buttons.slice(0,2))+'</div><p>'+esc(s.paragraphs[1]).replace('contactanos','<a class="link" href="#/contacto">contactanos</a>')+'</p></section>';};
 
   // ===================== Estructura 2: producto primero, empresas, nosotros, ETI =====================
-  var FECHA_ETI='Fines de noviembre';
+  var FECHA_ETI='20 de noviembre';
   // Prensa: notas publicadas sobre La Rañatela (se suman y editan desde el panel)
   var PRENSA=[
     {id:'p1',medio:'ADN País',fecha:'2026-06-09',titulo:'EMESA impulsa la inclusión laboral junto a La Rañatela',url:'https://adnpais.com/notas/98514-EMESA-impulsa-la-inclusion-laboral-junto-a-La-Raniatela'},
@@ -194,7 +194,7 @@
   window.__ytId=ytId;
   function prensaSeccion(){var l=PRENSA.slice().sort(function(a,b){return String(b.fecha||'0').localeCompare(String(a.fecha||'0'));});if(!l.length)return '';
     var nv=l.filter(function(n){return ytId(n.url);}).length;
-    return '<section class="cont sec-pad" id="prensa"><div class="cat-cab rv"><h2 class="h2">En los medios</h2><span class="cuenta">'+l.length+' notas'+(nv?' · '+nv+(nv>1?' videos':' video'):'')+'</span></div><div class="prensa">'+l.map(function(n,i){var y=ytId(n.url),d=(i%3?' d'+(i%3):'');
+    return '<section class="cont sec-pad" id="prensa"><div class="cat-cab rv"><h2 class="h2">En los medios</h2><span class="cuenta">'+(l.length-nv)+' nota'+(l.length-nv===1?'':'s')+(nv?' · '+nv+(nv>1?' videos':' video'):'')+'</span></div><div class="prensa">'+l.map(function(n,i){var y=ytId(n.url),d=(i%3?' d'+(i%3):'');
       if(y)return '<article class="pr-nota pr-video rv'+d+'"><button class="pr-yt" type="button" data-yt="'+y+'" aria-label="Ver video: '+esc(n.titulo)+'"><img src="'+esc(n.imagen||ytMini(y))+'" alt="" loading="lazy" data-err="mini"><span class="pr-yt-ph" aria-hidden="true">'+esc(n.medio)+'</span><span class="pr-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span></button><span class="pr-medio">'+esc(n.medio)+'</span><b>'+esc(n.titulo)+'</b><span class="pr-pie">'+esc(fechaPrensa(n.fecha))+'<a href="'+esc(n.url)+'" target="_blank" rel="noopener">Ver en YouTube →</a></span></article>';
       return '<a class="pr-nota rv'+d+'" href="'+esc(n.url)+'" target="_blank" rel="noopener">'+(n.imagen?'<span class="pr-im"><img src="'+esc(n.imagen)+'" alt="" loading="lazy"></span>':'')+'<span class="pr-medio">'+esc(n.medio)+'</span><b>'+esc(n.titulo)+'</b><span class="pr-pie">'+esc(fechaPrensa(n.fecha))+'<em>Leer nota →</em></span></a>';}).join('')+'</div></section>';}
   var YT_OK=null;(function(){var i=new Image(),t0=setTimeout(function(){if(YT_OK===null)YT_OK=false;},4000);i.onload=function(){clearTimeout(t0);YT_OK=i.naturalWidth>0;};i.onerror=function(){clearTimeout(t0);YT_OK=false;};i.src='https://i.ytimg.com/vi/XMh3yZOPyrs/default.jpg';})();
@@ -229,13 +229,13 @@
     return '<div class="soluciones">'+SOLUCIONES.map(function(s,i){return '<article class="sol rv'+(i%2?' d1':'')+'"><span class="sol-im"><img src="'+s.im+'" alt="'+esc(s.alt)+'" loading="lazy"></span><div class="sol-tx"><span class="sol-n">0'+(i+1)+'</span><h3>'+esc(s.t)+'</h3><p>'+esc(s.d)+'</p>'+(conBoton?'<a class="link" href="#/contacto?'+encodeURIComponent('Otro / desarrollo a medida')+'">Pedir presupuesto →</a>':'')+'</div></article>';}).join('')+'</div>';
   }
   function etiBanda(){
-    return '<section class="eti-banda"><div class="cont g2 sec-pad"><div class="pila rv"><p class="ojal">ETI · Encuentro de Trabajo Inclusivo</p><h2 class="h2">Una noche para conocer el trabajo de cerca.</h2><p class="lead">Empresas, trabajadores y equipos de La Rañatela en un mismo lugar. Fines de noviembre, en Mendoza.</p><div class="fila-btn"><a class="btn" href="#/eti">Conocé el ETI</a><a class="btn am" href="#/eti?sumate">Sumá a tu empresa</a></div></div><div class="eti-sigla rv d2" aria-hidden="true">ETI</div></div></section>';
+    return '<section class="eti-banda"><div class="cont g2 sec-pad"><div class="pila rv"><p class="ojal">ETI · Encuentro de Trabajo Inclusivo</p><h2 class="h2">Una noche para conocer el trabajo de cerca.</h2><p class="lead">Empresas, trabajadores y equipos de La Rañatela en un mismo lugar. 20 de noviembre en Bodegas López, Mendoza.</p><div class="fila-btn"><a class="btn" href="#/eti">Conocé el ETI</a><a class="btn am" href="#/eti?sumate">Sumá a tu empresa</a></div></div><div class="eti-sigla rv d2" aria-hidden="true">ETI</div></div></section>';
   }
 
   // Banners ya diseñados de ETI y Tejiendo Oportunidades (los mismos de laranatela.com)
   var BANNERS={
     eti:{href:'#/eti',ext:false,base:'img/banners/eti',
-      alt:'ETI, Encuentro de Trabajo Inclusivo. A fines de noviembre en Mendoza. Una nueva conversación entre empresas y trabajo inclusivo. Sumá a tu empresa. Organizan La Rañatela y Lianyeli.'},
+      alt:'ETI, Encuentro de Trabajo Inclusivo. El 20 de noviembre en Bodegas López, Mendoza. Una nueva conversación entre empresas y trabajo inclusivo. Sumá a tu empresa. Organizan La Rañatela y Lianyeli.'},
     to:{href:'#/tejiendo-oportunidades',ext:false,base:'img/banners/tejiendo-oportunidades',
       alt:'Campaña Tejiendo Oportunidades 2026. Sumale valor a tu mate, sumate. Set matero de bolso, yerbero y azucarero hechos en La Rañatela, con los nombres de quienes lo hicieron estampados en la tela. 20.000 pesos. Conseguí el tuyo.'},
     ly:{href:'https://lianyeli.laranatela.com',ext:true,base:'img/banners/lianyeli',
@@ -270,7 +270,7 @@
     v.muted=!on;if(on){try{v.currentTime=0;}catch(_){}var p=v.play();if(p&&p.catch)p.catch(function(){});}b.setAttribute('aria-pressed',String(on));b.querySelector('span').textContent=on?'Silenciar':'Activar sonido';});}
   function galeriaNavidad(){return '<section class="cont sec-pad" style="padding-top:0"><div class="cat-cab rv"><h2 class="h2">Regalos navideños que hicimos</h2><a class="link" href="#/contacto?'+encodeURIComponent('Otro / desarrollo a medida')+'">Pedir presupuesto →</a></div><div class="nav-gal">'+NAVIDAD.map(function(n,i){return '<figure class="rv'+(i?' d'+i:'')+'"><img src="'+n[0]+'" alt="'+esc(n[1])+'" loading="lazy"><figcaption>'+esc(n[2])+'</figcaption></figure>';}).join('')+'</div></section>';}
   function tambienNov(){return '<section class="cont sec-pad" style="padding-top:0"><h2 class="h2 rv" style="margin-bottom:24px">También en La Rañatela</h2><div class="tamb">'+
-    '<a class="tamb-eti rv" href="#/eti"><img src="img/eti-sigla-relieve-sobre-azul.png" alt="" width="1340" height="648"><span class="tamb-tx"><b>ETI · Encuentro de Trabajo Inclusivo</b><span>Fines de noviembre en Mendoza. Una nueva conversación entre empresas y trabajo inclusivo.</span><em>Sumá a tu empresa →</em></span></a>'+
+    '<a class="tamb-eti rv" href="#/eti"><img src="img/eti-sigla-relieve-sobre-azul.png" alt="" width="1340" height="648"><span class="tamb-tx"><b>ETI · Encuentro de Trabajo Inclusivo</b><span>20 de noviembre en Bodegas López. Una nueva conversación entre empresas y trabajo inclusivo.</span><em>Sumá a tu empresa →</em></span></a>'+
     '<a class="tamb-to rv d1" href="#/tejiendo-oportunidades"><img src="img/to/negro-2-estudio.jpg" alt="" loading="lazy"><span class="tamb-tx"><b>Tejiendo Oportunidades 2026</b><span>Set matero hecho en La Rañatela: cada set lleva el nombre de quien lo hizo.</span><em>Conseguí el tuyo →</em></span></a></div></section>';}
   R.novedades=function(){var h=_nov.apply(this,arguments),k=h.indexOf('</section>');return k<0?h:h.slice(0,k+10)+galeriaNavidad()+videoNavidad()+banner('eti')+banner('to')+banner('ly')+h.slice(k+10);};
 
@@ -279,8 +279,8 @@
     var dest=D.productos.filter(function(p){return p.destacado;}).sort(function(a,b){return a.orden-b.orden;}).slice(0,6);
     var col=['tote-lienzo','mochila-urbana','set-matero'].map(prodPorSlug).filter(Boolean);
     var html='<section class="cont hero hero-prod g2"><div class="col">'+ojal('Hecho en Maipú, Mendoza · desde 2009',true)+
-      '<h1 class="h1">Bolsas, mochilas y textiles <span style="color:var(--accent)">a medida para tu empresa</span></h1>'+
-      '<p class="lead entra e3">Diseñamos, confeccionamos y personalizamos en nuestro propio taller. Pedidos desde 100 unidades, en 10 a 15 días hábiles.</p>'+
+      '<h1 class="h1">Merchandising y productos textiles <span style="color:var(--accent)">con la imagen de tu empresa</span></h1>'+
+      '<p class="lead entra e3">Diseñamos, confeccionamos y personalizamos en nuestro propio taller: merchandising, ropa de trabajo y deportiva, y packaging con tu marca. Pedidos desde 100 unidades, en 10 a 15 días hábiles.</p>'+
       '<div class="entra e4 fila-btn"><a class="btn" href="#/productos">Ver catálogo</a><a class="btn am" href="#/contacto">Pedir presupuesto</a></div></div>'+
       '<div class="collage entra e3">'+col.map(function(p,i){return '<a class="col-'+i+'" href="#/productos/'+p.slug+'"><img src="'+img(p.imagen)+'" alt="'+esc(p.imagenAlt)+'"'+(i?' loading="lazy"':'')+'><span>'+esc(p.nombre)+'</span></a>';}).join('')+'</div></section>';
     html+='<section aria-label="Confiaron en nosotros" style="padding-block:clamp(8px,2vw,24px) clamp(40px,5vw,64px);position:relative;z-index:1"><div class="cont rv">'+ojal('Confiaron en nosotros')+'<h2 class="h2" style="margin:10px 0 28px">Trabajamos para empresas de primera línea</h2></div>'+logosConfianza()+'</section>';
@@ -327,7 +327,7 @@
     var p=r.paragraphs||[];
     var html='<section class="cont pag-cab">'+ojal('Nosotros',true)+'<h1 class="h1">De Italia a Maipú</h1><p class="lead entra e3">'+esc(sec('historia','hero').paragraphs[0])+'</p></section>';
     html+='<section class="cont capitulos">'+
-      '<article class="capi rv"><span class="capi-n">01</span><h2 class="h3">La Rañatela italiana</h2><p>'+esc(p[0])+'</p></article>'+
+      '<article class="capi rv"><span class="capi-n">01</span><h2 class="h3">La Ragnatela italiana</h2><p>'+esc(p[0])+'</p></article>'+
       '<article class="capi rv d1"><span class="capi-n">02</span><h2 class="h3">Maipú, 2009</h2><p>Arrancamos con 15 personas con discapacidad y 8 supervisores, y la serigrafía como primer oficio. Después de varias mudanzas, en 2013 llegó el lugar propio.</p></article>'+
       '<article class="capi rv d2"><span class="capi-n">03</span><h2 class="h3">Hoy</h2><p>101 trabajadores con discapacidad y unas 150 personas vinculadas al taller, produciendo para empresas de todo el país.</p></article></section>';
     html+='<section class="cont articulo"><figure class="fig der rv"><img src="img/fot-serigrafia-retrato.jpg" alt="Trabajador del taller preparando una impresión en serigrafía" loading="lazy"><figcaption>La serigrafía fue el primer oficio, y sigue siendo el corazón del taller.</figcaption></figure><p class="rv">'+esc(p[1])+'</p><blockquote class="rv">'+esc(p[2])+'</blockquote><p class="rv">'+esc(p[3])+'</p></section>';
@@ -367,7 +367,7 @@
       '<div class="eti-acc entra e4"><a class="eti-btn" href="#/eti?sumate">Sumá a tu empresa <span aria-hidden="true">→</span></a><a class="eti-btn2" href="https://www.instagram.com/eti.laranatela/" target="_blank" rel="noopener">Seguí el ETI</a></div>'+
       '<div class="eti-org entra e4"><span>Organizan</span><img src="img/eti-organizan.png" width="253" height="100" alt="La Rañatela y Lianyeli"></div></div></div></section>';
     html+='<section class="eti-p eti-claro"><div class="cont sec-pad eti-intro"><p class="eti-frase rv">No es una cena de beneficencia. Es una noche para ver el trabajo de cerca, conocerse y sumarse.</p>'+
-      '<dl class="eti-datos rv d1"><div><dt>2026</dt><dd>Primera edición</dd></div><div><dt>'+esc(FECHA_ETI)+'</dt><dd>En una bodega de Mendoza</dd></div><div><dt>Empresas</dt><dd>Con invitación</dd></div></dl></div></section>';
+      '<dl class="eti-datos rv d1"><div><dt>2026</dt><dd>Primera edición</dd></div><div><dt>'+esc(FECHA_ETI)+'</dt><dd>Bodegas López</dd></div><div><dt>Empresas</dt><dd>Con invitación</dd></div></dl></div></section>';
     html+='<section class="eti-p eti-claro"><div class="cont sec-pad" style="padding-top:0"><p class="eti-cap rv">La noche</p><h2 class="eti-h2 rv">Cinco paradas</h2><ol class="eti-paradas">'+paradas.map(function(x,i){return '<li class="rv'+(i?' d'+Math.min(3,i):'')+(i===4?' fin':'')+'"><span class="eti-n">'+(i+1)+'</span><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></li>';}).join('')+'</ol></div></section>';
     html+='<section class="eti-p eti-oscuro"><div class="cont sec-pad"><p class="eti-cap rv">Cómo sumarse</p><h2 class="eti-h2 rv">Tres formas de estar</h2><div class="eti-formas">'+
       '<article class="rv"><span>01</span><h3>Socio Colaborador</h3><p>Un convenio de 12 a 24 meses: una parte de lo que tu empresa ya compra se transforma en trabajo, con productos y fechas programados.</p><a href="#/eti?sumate">Quiero saber más →</a></article>'+
@@ -1017,7 +1017,7 @@
   function g(k,def){var v=CMS.general[k];return (v===undefined||v===null||v==='')?def:v;}
   function aplicarCMS(){
     WA='https://wa.me/'+String(g('whatsapp',REDES0.wa)).replace(/\D/g,'')+'?text=';
-    PRECIO_TO=g('precioTO','$20.000');PUNTOS_TO=g('puntosTO','Honey House y La Rañatela.');FECHA_ETI=g('fechaETI','Fines de noviembre');
+    PRECIO_TO=g('precioTO','$20.000');PUNTOS_TO=g('puntosTO','Honey House y La Rañatela.');FECHA_ETI=g('fechaETI','20 de noviembre');
     var imp=CMS.general.impacto;IMPACTO=(imp&&imp.length===3)?imp.map(function(x,i){return [x.n||IMP0[i][0],x.t||IMP0[i][1],x.s||IMP0[i][2]];}):IMP0.map(function(x){return x.slice();});
     var r={instagram:g('instagram',REDES0.instagram),tiktok:g('tiktok',REDES0.tiktok),linkedin:g('linkedin',REDES0.linkedin)};
     var rf=document.querySelectorAll('.redes-flot a');if(rf.length===3){rf[0].href=r.instagram;rf[1].href=r.tiktok;rf[2].href=r.linkedin;}
@@ -1066,7 +1066,7 @@
     var novs=NOV0.filter(function(n){return !(CMS.novedades[n.slug]||{}).eliminada;}).map(function(n){return Object.assign({},n,(CMS.novedades[n.slug]||{}).datos||{});}).concat(Object.keys(CMS.novedades).filter(function(k){return CMS.novedades[k].nuevo&&!CMS.novedades[k].eliminada;}).map(function(k){return CMS.novedades[k].datos||{};})), bor=novs.filter(function(n){return n.borrador;}).length;
     var fotos=CMS.galerias.length, pzOn=prods.filter(function(p){return p.pz&&p.pz.on;}).length;
     var G=CMS.general, faltas=[];
-    if(!G.fechaETI||/fines de noviembre/i.test(G.fechaETI))faltas.push(['general','La fecha del ETI todavía dice "Fines de noviembre": ponele el día exacto cuando esté confirmado.']);
+    prods.forEach(function(q){if(!q.imagen&&!q.oculto)faltas.push(['productos','"'+q.nombre+'" todavía no tiene foto: se muestra con un cartel "Foto en camino".']);});
     if(bor)faltas.push(['novedades',bor+(bor===1?' novedad está como borrador':' novedades están como borrador')+': no se ven en el sitio hasta que las publiques.']);
     if(!de)faltas.push(['productos','No hay productos marcados "En lo más pedido": el inicio muestra los primeros del catálogo.']);
     if(de>6)faltas.push(['productos','Hay '+de+' productos en "Lo más pedido". Conviene dejar entre 3 y 6 para que el inicio no se haga largo.']);
@@ -1090,7 +1090,7 @@
     return '<form class="adm-form" data-f="general"><h2>Datos generales</h2>'+adminDonde('general')+
       '<fieldset><legend>Contacto y redes</legend>'+campo('g-wa','WhatsApp (número completo)',G.whatsapp||REDES0.wa,'text','Con código de país, sin espacios: 5492615341275')+campo('g-ig','Instagram',G.instagram||REDES0.instagram,'url')+campo('g-tt','TikTok',G.tiktok||REDES0.tiktok,'url')+campo('g-li','LinkedIn',G.linkedin||REDES0.linkedin,'url')+'</fieldset>'+
       '<fieldset><legend>Cifras de impacto (inicio)</legend>'+imp.map(function(x,i){return '<div class="adm-fila3">'+campo('g-in'+i,'Número',x.n)+campo('g-it'+i,'Título',x.t)+campo('g-is'+i,'Detalle',x.s)+'</div>';}).join('')+'</fieldset>'+
-      '<fieldset><legend>ETI y YOSUMÉ</legend>'+campo('g-fe','Fecha del ETI como se muestra',G.fechaETI||'Fines de noviembre','text','Ej.: Fines de noviembre · Viernes 20 de noviembre')+campo('g-pr','Precio del set (YOSUMÉ)',G.precioTO||'$20.000')+campo('g-pu','Puntos de retiro',G.puntosTO||'Honey House y La Rañatela.')+chk('g-bn','Mostrar los banners de ETI, Tejiendo Oportunidades y Lianyeli',G.banners!==false)+'</fieldset>'+
+      '<fieldset><legend>ETI y YOSUMÉ</legend>'+campo('g-fe','Fecha del ETI como se muestra',G.fechaETI||'20 de noviembre','text','Ej.: 20 de noviembre · Viernes 20 de noviembre')+campo('g-pr','Precio del set (YOSUMÉ)',G.precioTO||'$20.000')+campo('g-pu','Puntos de retiro',G.puntosTO||'Honey House y La Rañatela.')+chk('g-bn','Mostrar los banners de ETI, Tejiendo Oportunidades y Lianyeli',G.banners!==false)+'</fieldset>'+
       '<div class="adm-acc"><button class="btn" type="submit">Guardar cambios</button></div></form>';}
   function adminTabNovedades(){
     if(ADM.edit){var n=ADM.edit==='nueva'?{}:(D.novedades.filter(function(x){return x.slug===ADM.edit;})[0]||{});
