@@ -1,0 +1,1 @@
+(function(){try{document.documentElement.lang='es-AR';if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&window.scrollY<20&&(!location.hash||location.hash==='#/'||location.hash==='#')){var r=document.documentElement;r.classList.add('en-intro');setTimeout(function(){if(!window.THREE)r.classList.remove('en-intro');},6000);}}catch(e){}})();
