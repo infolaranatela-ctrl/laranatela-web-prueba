@@ -1033,16 +1033,46 @@
   setTimeout(cmsIniciar,0);
 
   // ---------- Página de administración ----------
-  var ADM={tab:'general',edit:null,msg:''};
-  function aviso(t,tipo){ADM.msg=t;ADM.tipo=tipo||'ok';var m=document.querySelector('.adm-msg');if(m){m.textContent=t;m.className='adm-msg '+ADM.tipo;}}
+  var ADM={tab:'inicio',edit:null,msg:'',sucio:false};
+  function aviso(t,tipo){ADM.msg=t;ADM.tipo=tipo||'ok';var m=document.querySelector('.adm-msg');if(m){m.textContent=t;m.className='adm-msg '+ADM.tipo+' ver';clearTimeout(aviso._t);if(ADM.tipo!=='error')aviso._t=setTimeout(function(){m.classList.remove('ver');},4500);}
+    if(ADM.tipo==='ok'&&/guardad|publicad/i.test(t)){ADM.sucio=false;var sb=document.querySelector('.adm-sucio');if(sb)sb.hidden=true;}}
+  window.addEventListener('beforeunload',function(e){if(ADM.sucio&&document.getElementById('adm')){e.preventDefault();e.returnValue='';}});
   function subir(file){if(!CMSASSETS)return Promise.reject({code:'sin_permiso'});return CMSASSETS.upload(file);}
   function campo(id,lab,val,tipo,ayuda){tipo=tipo||'text';var inp=tipo==='area'?'<textarea id="'+id+'" rows="4">'+esc(val||'')+'</textarea>':'<input id="'+id+'" type="'+tipo+'"'+(tipo==='number'?' step="any" min="0" inputmode="decimal"':'')+' value="'+esc(val==null?'':val)+'">';return '<label class="adm-campo"><span>'+lab+'</span>'+inp+(ayuda?'<small>'+ayuda+'</small>':'')+'</label>';}
   function chk(id,lab,on){return '<label class="adm-chk"><input id="'+id+'" type="checkbox"'+(on?' checked':'')+'><span>'+lab+'</span></label>';}
   function v(id){var e=document.getElementById(id);var x=e?(e.type==='checkbox'?e.checked:e.value.trim()):'';return (typeof x==='string'&&/^(p-img|n-img|z-img|p-glb|z-ur|g-ig|g-tt|g-li)$/.test(id))?urlSegura(x):x;}
   // Solo se aceptan links http(s), rutas del sitio o archivos subidos: nada de javascript: ni data:.
   function urlSegura(u){if(!u)return '';u=u.trim();if(/^(https?:)?\/\//i.test(u)||/^(img\/|#\/|\/|blob:https?:)/i.test(u))return u;if(/^[a-z][a-z0-9+.-]*:/i.test(u))return '';return u;}
+  // Inicio del panel: qué hacer, cómo está el sitio y dónde se ve cada cosa
+  var DONDE={general:'Inicio (cifras y banners), pie de página (WhatsApp y redes), ETI y YOSUMÉ (fecha, precio y puntos de retiro).',novedades:'Novedades, y la destacada también en Inicio.',productos:'Productos (catálogo y fichas), "Lo más pedido" en Inicio y el personalizador 3D.',galerias:'Novedades (regalos navideños) y ETI (galería).',prensa:'Nosotros, en "En los medios".'};
+  function adminTabInicio(){
+    var prods=PROD0.map(function(p){return Object.assign({},p,CMS.productos[p.slug]||{});}).concat(Object.keys(CMS.productos).filter(function(k){return CMS.productos[k].nuevo;}).map(function(k){return CMS.productos[k];}));
+    var oc=prods.filter(function(p){return p.oculto;}).length, de=prods.filter(function(p){return p.destacado&&!p.oculto;}).length;
+    var novs=NOV0.filter(function(n){return !(CMS.novedades[n.slug]||{}).eliminada;}).map(function(n){return Object.assign({},n,(CMS.novedades[n.slug]||{}).datos||{});}).concat(Object.keys(CMS.novedades).filter(function(k){return CMS.novedades[k].nuevo&&!CMS.novedades[k].eliminada;}).map(function(k){return CMS.novedades[k].datos||{};})), bor=novs.filter(function(n){return n.borrador;}).length;
+    var fotos=CMS.galerias.length, pzOn=prods.filter(function(p){return p.pz&&p.pz.on;}).length;
+    var G=CMS.general, faltas=[];
+    if(!G.fechaETI||/fines de noviembre/i.test(G.fechaETI))faltas.push(['general','La fecha del ETI todavía dice "Fines de noviembre": ponele el día exacto cuando esté confirmado.']);
+    if(bor)faltas.push(['novedades',bor+(bor===1?' novedad está como borrador':' novedades están como borrador')+': no se ven en el sitio hasta que las publiques.']);
+    if(!de)faltas.push(['productos','No hay productos marcados "En lo más pedido": el inicio muestra los primeros del catálogo.']);
+    if(de>6)faltas.push(['productos','Hay '+de+' productos en "Lo más pedido". Conviene dejar entre 3 y 6 para que el inicio no se haga largo.']);
+    function acc(tab,tit,sub,a){return '<button type="button" class="adm-card" data-tab="'+tab+'"'+(a?' data-ir="'+a+'"':'')+'><b>'+tit+'</b><span>'+sub+'</span></button>';}
+    return '<h2>¿Qué querés hacer?</h2><div class="adm-cards">'+
+      acc('novedades','Publicar una novedad','Una nota con foto, que puede ir destacada en el inicio.','nueva-nov')+
+      acc('productos','Sumar o editar un producto','Nombre, foto, resumen, colores y si va en "Lo más pedido".')+
+      acc('general','Cambiar un dato','WhatsApp, redes, cifras del inicio, fecha del ETI, precio del set.')+
+      acc('galerias','Subir fotos','A la galería del ETI o a los regalos navideños.')+
+      acc('prensa','Cargar una nota de prensa','Link a la nota o a un video de YouTube.','nueva-prensa')+'</div>'+
+      '<h3 class="adm-h3">Cómo está el sitio</h3><div class="adm-estado">'+
+      '<div><b>'+(prods.length-oc)+'</b><span>productos visibles'+(oc?' · '+oc+' oculto'+(oc>1?'s':''):'')+'</span></div>'+
+      '<div><b>'+de+'</b><span>en "Lo más pedido"</span></div>'+
+      '<div><b>'+pzOn+'</b><span>productos nuevos en el personalizador 3D</span></div>'+
+      '<div><b>'+(novs.length-bor)+'</b><span>novedades publicadas'+(bor?' · '+bor+' borrador'+(bor>1?'es':''):'')+'</span></div>'+
+      '<div><b>'+fotos+'</b><span>fotos sumadas a galerías</span></div></div>'+
+      (faltas.length?'<h3 class="adm-h3">Para revisar</h3><ul class="adm-faltas">'+faltas.map(function(f){return '<li><span>'+f[1]+'</span><button type="button" class="adm-link" data-tab="'+f[0]+'">Ir</button></li>';}).join('')+'</ul>':'')+
+      '<h3 class="adm-h3">Cómo funciona</h3><ul class="adm-guia"><li><b>Los cambios se publican al tocar Guardar.</b> No hay borrador ni vista previa: lo que guardás, se ve. Si algo quedó mal, volvé a editarlo o usá "Volver al original".</li><li><b>Las fotos</b> conviene subirlas horizontales y livianas (menos de 2 MB). El sitio las recorta solo.</li><li><b>Textos:</b> mayúsculas sin tilde en títulos grandes; hablamos de "trabajadores" o "el equipo", nunca de "los chicos"; invitamos a sumarse, no pedimos ayuda.</li><li><b>Si algo no se guarda,</b> revisá que estés con la cuenta de La Rañatela en claude.ai y volvé a intentar.</li></ul>';}
+  function adminDonde(tab){return DONDE[tab]?'<p class="adm-donde"><b>Se ve en:</b> '+DONDE[tab]+'</p>':'';}
   function adminTabGeneral(){var G=CMS.general,imp=(G.impacto&&G.impacto.length===3)?G.impacto:IMP0.map(function(x){return {n:x[0],t:x[1],s:x[2]};});
-    return '<form class="adm-form" data-f="general"><h2>Datos generales</h2>'+
+    return '<form class="adm-form" data-f="general"><h2>Datos generales</h2>'+adminDonde('general')+
       '<fieldset><legend>Contacto y redes</legend>'+campo('g-wa','WhatsApp (número completo)',G.whatsapp||REDES0.wa,'text','Con código de país, sin espacios: 5492615341275')+campo('g-ig','Instagram',G.instagram||REDES0.instagram,'url')+campo('g-tt','TikTok',G.tiktok||REDES0.tiktok,'url')+campo('g-li','LinkedIn',G.linkedin||REDES0.linkedin,'url')+'</fieldset>'+
       '<fieldset><legend>Cifras de impacto (inicio)</legend>'+imp.map(function(x,i){return '<div class="adm-fila3">'+campo('g-in'+i,'Número',x.n)+campo('g-it'+i,'Título',x.t)+campo('g-is'+i,'Detalle',x.s)+'</div>';}).join('')+'</fieldset>'+
       '<fieldset><legend>ETI y YOSUMÉ</legend>'+campo('g-fe','Fecha del ETI como se muestra',G.fechaETI||'Fines de noviembre','text','Ej.: Fines de noviembre · Viernes 20 de noviembre')+campo('g-pr','Precio del set (YOSUMÉ)',G.precioTO||'$20.000')+campo('g-pu','Puntos de retiro',G.puntosTO||'Honey House y La Rañatela.')+chk('g-bn','Mostrar los banners de ETI, Tejiendo Oportunidades y Lianyeli',G.banners!==false)+'</fieldset>'+
@@ -1116,13 +1146,13 @@
         chk('p-de','En "Lo más pedido" (inicio)',q.destacado)+chk('p-oc','Ocultar del sitio',q.oculto)+
         '<div class="adm-acc"><button class="btn" type="submit">Guardar</button><button class="btn am" type="button" data-a="volver">Volver</button>'+(CMS.productos[ADM.edit]?'<button class="adm-borrar" type="button" data-a="restaurar-prod">Volver al original</button>':'')+'</div></form>';}
     var nuevosP=Object.keys(CMS.productos).filter(function(k){return CMS.productos[k].nuevo;}).map(function(k){return Object.assign({slug:k},CMS.productos[k]);});
-    return '<div class="adm-cab"><h2>Productos</h2><div class="adm-acc"><input class="adm-buscar" type="search" placeholder="Buscar producto" aria-label="Buscar producto"><button class="btn" data-a="nuevo-prod">Nuevo producto</button></div></div><ul class="adm-lista adm-prods">'+nuevosP.concat(PROD0).map(function(p0){var o=CMS.productos[p0.slug]||{},p=Object.assign({},p0,o);return '<li data-busca="'+esc((p.nombre||'').toLowerCase())+'"><img src="'+esc(img(p.imagen))+'" alt=""><div><b>'+esc(p.nombre)+'</b><small>'+(p.oculto?'Oculto':(p.destacado?'En lo más pedido':'Visible'))+(CMS.productos[p0.slug]?' · editado':'')+'</small></div><button class="btn am" data-a="editar-prod" data-id="'+esc(p0.slug)+'">Editar</button></li>';}).join('')+'</ul>';}
+    return '<div class="adm-cab"><h2>Productos</h2><div class="adm-acc"><input class="adm-buscar" type="search" placeholder="Buscar producto" aria-label="Buscar producto"><button class="btn" data-a="nuevo-prod">Nuevo producto</button></div></div>'+adminDonde('productos')+'<p class="adm-ayuda">"Destacar" lo pone en "Lo más pedido" del inicio (conviene entre 3 y 6). "Ocultar" lo saca del sitio sin borrarlo.</p><ul class="adm-lista adm-prods">'+nuevosP.concat(PROD0).map(function(p0){var o=CMS.productos[p0.slug]||{},p=Object.assign({},p0,o);return '<li data-busca="'+esc((p.nombre||'').toLowerCase())+'"'+(p.oculto?' class="adm-oculto"':'')+'><img src="'+esc(img(p.imagen))+'" alt=""><div><b>'+esc(p.nombre)+'</b><small>'+(p.oculto?'<em class="adm-pill off">Oculto</em>':(p.destacado?'<em class="adm-pill on">En lo más pedido</em>':'<em class="adm-pill">Visible</em>'))+(p.pz&&p.pz.on?' <em class="adm-pill">3D</em>':'')+(CMS.productos[p0.slug]&&!p.nuevo?' · editado':'')+'</small></div><div class="adm-acc-mini"><button class="adm-link" data-a="alternar-dest" data-id="'+esc(p0.slug)+'" title="'+(p.destacado?'Sacar de "Lo más pedido"':'Poner en "Lo más pedido"')+'">'+(p.destacado?'★ Destacado':'☆ Destacar')+'</button><button class="adm-link" data-a="alternar-oculto" data-id="'+esc(p0.slug)+'">'+(p.oculto?'Mostrar':'Ocultar')+'</button><button class="btn am" data-a="editar-prod" data-id="'+esc(p0.slug)+'">Editar</button></div></li>';}).join('')+'</ul>';}
   function adminTabGalerias(){
     function gal(k,tit,base){var extra=CMS.galerias.filter(function(x){return x.galeria===k;});
       return '<section class="adm-gal"><div class="adm-cab"><h3>'+tit+'</h3><label class="btn adm-subir">Sumar fotos<input type="file" accept="image/*" multiple data-gal="'+k+'"></label></div><div class="adm-grilla">'+
         base.map(function(s){return '<figure><img src="'+esc(typeof s==='string'?s:s[0])+'" alt=""><figcaption>Original</figcaption></figure>';}).join('')+
         extra.map(function(x){return '<figure><img src="'+esc(x.url)+'" alt=""><input class="adm-pie" data-id="'+esc(x.id)+'" value="'+esc(x.pie||'')+'" placeholder="Pie de foto" aria-label="Pie de foto"><button class="adm-borrar" data-a="borrar-foto" data-id="'+esc(x.id)+'">Quitar</button></figure>';}).join('')+'</div></section>';}
-    return '<h2>Galerías</h2>'+gal('navidad','Regalos navideños (Novedades)',NAV0)+gal('eti','Galería del ETI',GALETI0);}
+    return '<h2>Galerías</h2>'+adminDonde('galerias')+'<p class="adm-ayuda">Las fotos "Original" vienen con el sitio y no se pueden quitar desde acá. Las que sumes se pueden quitar y llevan un pie de foto.</p>'+gal('navidad','Regalos navideños (Novedades)',NAV0)+gal('eti','Galería del ETI',GALETI0);}
   document.addEventListener('input',function(e){if(e.target.id!=='z-ur')return;var b=document.getElementById('z-ytprev');if(!b)return;var y=ytId(e.target.value);b.innerHTML=y?'<img src="'+ytMini(y)+'" alt=""><span>Video de YouTube detectado</span>':'';});
   function adminTabPrensa(){
     if(ADM.edit){var n=ADM.edit==='nueva'?{}:(PRENSA.filter(function(x){return x.id===ADM.edit;})[0]||{});
@@ -1130,14 +1160,16 @@
         '<div class="adm-foto">'+(n.imagen?'<img src="'+esc(n.imagen)+'" alt="">':'<span>Sin imagen (opcional)</span>')+'<label class="btn am adm-subir">'+(n.imagen?'Cambiar imagen':'Sumar imagen')+'<input type="file" accept="image/*" data-up="z-img"></label><input type="hidden" id="z-img" value="'+esc(n.imagen||'')+'"></div>'+
         '<div class="adm-acc"><button class="btn" type="submit">Guardar</button><button class="btn am" type="button" data-a="volver">Volver</button>'+(ADM.edit!=='nueva'?'<button class="adm-borrar" type="button" data-a="borrar-prensa">Quitar</button>':'')+'</div></form>';}
     var l=PRENSA.slice().sort(function(a,b){return String(b.fecha||'0').localeCompare(String(a.fecha||'0'));});
-    return '<div class="adm-cab"><h2>Prensa</h2><button class="btn" data-a="nueva-prensa">Nueva nota</button></div><p class="adm-ayuda">Se muestran en Nosotros, en "En los medios".</p><ul class="adm-lista">'+l.map(function(n){return '<li>'+(n.imagen||ytId(n.url)?'<img src="'+esc(n.imagen||ytMini(ytId(n.url)))+'" alt="">':'<i></i>')+'<div><b>'+esc(n.titulo)+'</b><small>'+esc(n.medio)+(n.fecha?' · '+esc(fechaPrensa(n.fecha)):'')+'</small></div><button class="btn am" data-a="editar-prensa" data-id="'+esc(n.id)+'">Editar</button></li>';}).join('')+'</ul>';}
+    return '<div class="adm-cab"><h2>Prensa</h2><button class="btn" data-a="nueva-prensa">Nueva nota</button></div><p class="adm-donde"><b>Se ve en:</b> Nosotros, en "En los medios". Ordenadas por fecha, la más nueva primero.</p><ul class="adm-lista">'+l.map(function(n){return '<li>'+(n.imagen||ytId(n.url)?'<img src="'+esc(n.imagen||ytMini(ytId(n.url)))+'" alt="">':'<i></i>')+'<div><b>'+esc(n.titulo)+'</b><small>'+esc(n.medio)+(n.fecha?' · '+esc(fechaPrensa(n.fecha)):'')+'</small></div><button class="btn am" data-a="editar-prensa" data-id="'+esc(n.id)+'">Editar</button></li>';}).join('')+'</ul>';}
   function adminPintar(){var raiz=document.getElementById('adm');if(!raiz)return;
     var puede=CMSUSER?CMSUSER.canEdit():null;
     if(!CMSDB){raiz.innerHTML='<div class="adm-vacio"><h2>Conectando…</h2><p>Si no carga, abrí el sitio desde claude.ai con tu cuenta.</p></div>';return;}
     if(puede===false){raiz.innerHTML='<div class="adm-vacio"><h2>Solo para editores</h2><p>Pedile a quien administra el sitio que te dé permiso de edición.</p></div>';return;}
-    var tabs=[['general','Datos generales'],['novedades','Novedades'],['productos','Productos'],['galerias','Galerías'],['prensa','Prensa']];
+    var tabs=[['inicio','Inicio'],['general','Datos generales'],['novedades','Novedades'],['productos','Productos'],['galerias','Galerías'],['prensa','Prensa']];
     raiz.innerHTML='<nav class="adm-tabs" role="tablist">'+tabs.map(function(t){return '<button role="tab" aria-selected="'+(ADM.tab===t[0])+'" data-tab="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</nav><p class="adm-msg '+(ADM.tipo||'')+'" role="status">'+esc(ADM.msg||'')+'</p><div class="adm-cuerpo">'+
-      (ADM.tab==='general'?adminTabGeneral():ADM.tab==='novedades'?adminTabNovedades():ADM.tab==='productos'?adminTabProductos():ADM.tab==='prensa'?adminTabPrensa():adminTabGalerias())+'</div>';
+      (ADM.tab==='inicio'?adminTabInicio():ADM.tab==='general'?adminTabGeneral():ADM.tab==='novedades'?adminTabNovedades():ADM.tab==='productos'?adminTabProductos():ADM.tab==='prensa'?adminTabPrensa():adminTabGalerias())+'</div>'+
+      '<div class="adm-sucio" hidden><span>Tenés cambios sin guardar.</span><button type="button" class="btn" data-a="guardar-form">Guardar</button></div>';
+    ADM.sucio=false;
     admPzDibujar();
   }
   function err(e){aviso(e&&e.code==='invalid_argument'?'No tenés permiso para guardar cambios.':e&&e.code==='quota_exceeded'?'Se llenó el espacio de la base de datos.':'No se pudo guardar. Probá de nuevo.','error');}
@@ -1145,7 +1177,8 @@
     ADM.edit=null;ADM.msg='';setTimeout(adminPintar,0);
     return '<div class="adm-top"><div class="adm-top-in"><span class="adm-marca"><img src="img/logo-blanco.png" alt="" width="36" height="36">La Rañatela <b>Admin</b> <span class="beta">Beta</span></span><a class="adm-ver" href="#/">Ver el sitio →</a></div><div class="adm-top-tx"><h1>Panel del sitio</h1><p>Cambiá textos, fotos, novedades y productos. Los cambios se ven en el sitio apenas guardás.</p></div></div><section class="adm-wrap"><div class="adm" id="adm"></div></section>';};
   document.addEventListener('click',function(e){var raiz=document.getElementById('adm');if(!raiz||!raiz.contains(e.target))return;
-    var t=e.target.closest('[data-tab]');if(t){ADM.tab=t.dataset.tab;ADM.edit=null;ADM.msg='';adminPintar();return;}
+    var t=e.target.closest('[data-tab]');if(t){if(ADM.sucio&&!t.dataset.ok){t.dataset.ok='1';var su=raiz.querySelector('.adm-sucio span');if(su)su.textContent='Tenés cambios sin guardar. Tocá de nuevo para salir sin guardar.';setTimeout(function(){delete t.dataset.ok;},3000);return;}ADM.tab=t.dataset.tab;ADM.edit=t.dataset.ir==='nueva-nov'||t.dataset.ir==='nueva-prensa'?'nueva':null;ADM.msg='';adminPintar();window.scrollTo({top:Math.max(0,raiz.getBoundingClientRect().top+scrollY-90),behavior:'smooth'});return;}
+    if(e.target.closest('[data-a="guardar-form"]')){var fm=raiz.querySelector('.adm-form');if(fm)fm.requestSubmit();return;}
     var b=e.target.closest('[data-a]');if(!b)return;var a=b.dataset.a,id=b.dataset.id;
     if(a==='volver'){ADM.edit=null;adminPintar();}
     if(a==='nueva-nov'){ADM.edit='nueva';adminPintar();}
@@ -1155,12 +1188,15 @@
     if(a==='borrar-prod'&&confirmar(b)){CMSDB.collection('productos').doc(ADM.edit).delete().then(function(){ADM.edit=null;aviso('Producto eliminado.');adminPintar();},err);}
     if(a==='borrar-prensa'&&confirmar(b)){var pid=ADM.edit,orig=PRENSA0.some(function(n){return n.id===pid;});(orig?CMSDB.collection('prensa').doc(pid).set({eliminada:true}):CMSDB.collection('prensa').doc(pid).delete()).then(function(){ADM.edit=null;aviso('Nota quitada.');adminPintar();},err);}
     if(a==='editar-nov'||a==='editar-prod'){ADM.edit=id;adminPintar();}
+    if(a==='alternar-dest'||a==='alternar-oculto'){var p0=PROD0.filter(function(x){return x.slug===id;})[0],o0=CMS.productos[id]||{},cur=Object.assign({},p0||{},o0),k=a==='alternar-dest'?'destacado':'oculto',nv={};nv[k]=!cur[k];
+      CMSDB.collection('productos').doc(id).set(Object.assign({},o0,nv)).then(function(){aviso(k==='destacado'?(nv[k]?'Ahora está en "Lo más pedido".':'Ya no está en "Lo más pedido".'):(nv[k]?'Producto oculto: no se ve en el sitio.':'Producto visible otra vez.'));},err);}
     if(a==='borrar-nov'&&confirmar(b)){var s=ADM.edit,o=CMS.novedades[s]||{};CMSDB.collection('novedades').doc(s).set(Object.assign({},o,{eliminada:true})).then(function(){ADM.edit=null;aviso('Novedad eliminada.');adminPintar();},err);}
     if(a==='restaurar-prod'&&confirmar(b)){CMSDB.collection('productos').doc(ADM.edit).delete().then(function(){aviso('Producto restaurado.');adminPintar();},err);}
     if(a==='borrar-foto'&&confirmar(b)){CMSDB.collection('galerias').doc(id).delete().then(function(){aviso('Foto quitada.');},err);}
   });
   function confirmar(b){if(b.dataset.ok){return true;}b.dataset.ok='1';var t=b.textContent;b.textContent='¿Seguro? Tocá de nuevo';setTimeout(function(){delete b.dataset.ok;b.textContent=t;},3000);return false;}
-  document.addEventListener('input',function(e){var q=e.target.closest('.adm-buscar');if(q){var s=q.value.toLowerCase();document.querySelectorAll('.adm-prods li').forEach(function(li){li.hidden=s&&li.dataset.busca.indexOf(s)<0;});}});
+  document.addEventListener('input',function(e){if(e.target.closest&&e.target.closest('.adm-form')&&!e.target.closest('.adm-buscar')){ADM.sucio=true;var sb=document.querySelector('.adm-sucio');if(sb){sb.hidden=false;sb.querySelector('span').textContent='Tenés cambios sin guardar.';}}
+    var q=e.target.closest('.adm-buscar');if(q){var s=q.value.toLowerCase();document.querySelectorAll('.adm-prods li').forEach(function(li){li.hidden=s&&li.dataset.busca.indexOf(s)<0;});}});
   document.addEventListener('change',function(e){var raiz=document.getElementById('adm');if(!raiz||!raiz.contains(e.target))return;
     var pie=e.target.closest('.adm-pie');if(pie){CMSDB.collection('galerias').doc(pie.dataset.id).update({pie:pie.value.trim()}).then(function(){aviso('Pie guardado.');},err);return;}
     var up=e.target.dataset.up,galk=e.target.dataset.gal,files=e.target.files;if(!files||!files.length)return;
