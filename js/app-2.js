@@ -316,7 +316,7 @@
     {id:'aesa',cliente:'Astra Evangelista (AESA, grupo YPF)',logo:'img/clientes-aesa.png',cifra:'7.500',unidad:'kits del Mundial',titulo:'Kits del Mundial y 3.500 camisas que no se tiraron',
      texto:'Para el Mundial 2026 armamos 7.500 kits: bandera argentina, piluso, cuello tipo puff y un banderín de 10 metros. En otro trabajo, 3.500 camisas de jean nuevas que la empresa no podía usar por normas de higiene y seguridad se transformaron en 3.500 delantales de asador, 3.500 mochilas y 7.000 cartucheras.',
      foto:'img/productos-delantal-jean.jpg',fotoAlt:'Delantal de asador confeccionado a partir de una camisa de jean recuperada',tecnica:'Varias técnicas',anio:'2026',repite:true},
-    {id:'ypf',cliente:'YPF',logo:'img/clientes-ypf.png',cifra:'3.000',unidad:'loncheras por año',titulo:'Cuatro años seguidos',
+    {id:'ypf',cliente:'YPF',logo:'img/clientes-ypf.png',foto:'img/casos-ypf-lonchera.jpg',fotoAlt:'Lonchera térmica YPF terminada, abierta, con el interior aislante a la vista',cifra:'3.000',unidad:'loncheras por año',titulo:'Cuatro años seguidos',
      texto:'Para la petrolera más grande de la Argentina hacemos unas 3.000 loncheras térmicas por año: tela tracker con foil interior que conserva el frío y el calor, y el logo en serigrafía. Empezamos en 2023 y 2026 es el cuarto año consecutivo.',
      tecnica:'Serigrafía',anio:'2023 – 2026',repite:true},
     {id:'arcor',cliente:'Arcor',logo:'img/clientes-arcor.png',cifra:'10.000',unidad:'delantales para Chocolina',titulo:'Diez mil delantales violetas',
