@@ -1,1 +1,1 @@
-(function(){try{document.documentElement.lang='es-AR';if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&window.scrollY<20&&(!location.hash||location.hash==='#/'||location.hash==='#')){var r=document.documentElement;r.classList.add('en-intro');setTimeout(function(){if(!window.THREE)r.classList.remove('en-intro');},6000);}}catch(e){}})();
+window.THREE_URL="js/three.min.js";(function(){try{var h=location.hash;if((!h||h==='#'||h==='#/')&&(!window.RUTAS_LIMPIAS||location.pathname==='/'))document.write('<script src="'+window.THREE_URL+'"><\/script>');}catch(e){}})();
